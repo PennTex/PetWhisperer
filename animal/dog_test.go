@@ -3,7 +3,7 @@ package animal_test
 import (
 	"testing"
 
-	"github.com/petwhisperer/petwhisperer/animal"
+	"github.com/PennTex/PetWhisperer/animal"
 	"github.com/stretchr/testify/assert"
 )
 
