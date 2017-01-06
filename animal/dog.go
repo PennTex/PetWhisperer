@@ -1,13 +1,13 @@
 package animal
 
 type Dog struct {
-	*animal
+	*Animal
 	breed []string
 }
 
 func NewDog(name string) *Dog {
 	return &Dog{
-		animal: newAnimal("dog", name),
+		Animal: newAnimal(name),
 	}
 }
 
