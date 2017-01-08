@@ -14,6 +14,10 @@ var animalService = services.NewAnimalService(animalRepo)
 var activityRepo repositories.InMemoryActivityRepo
 var activityService = services.NewActivityService(activityRepo)
 
+type Response struct {
+	Data interface{} `json:"data"`
+}
+
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/animals", getAnimals)
@@ -23,9 +27,11 @@ func main() {
 	http.ListenAndServe(":8080", r)
 }
 
-func getAnimals(w http.ResponseWriter, r *http.Request) {
-	animals := animalService.GetAnimals()
-	message, err := json.Marshal(animals)
+func sendResponse(w http.ResponseWriter, r *http.Request, data interface{}) {
+	response := Response{
+		Data: data,
+	}
+	message, err := json.Marshal(response)
 
 	if err != nil {
 		panic(err)
@@ -33,32 +39,25 @@ func getAnimals(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(message)
+}
+
+func getAnimals(w http.ResponseWriter, r *http.Request) {
+	animals := animalService.GetAnimals()
+	sendResponse(w, r, animals)
 }
 
 func getAnimalByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	animalID := vars["animalID"]
 	animal := animalService.GetAnimal(animalID)
-	message, err := json.Marshal(animal)
 
-	if err != nil {
-		panic(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(message)
+	sendResponse(w, r, animal)
 }
 
 func getAnimalActivity(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	animalID := vars["animalID"]
 	activities := activityService.GetAnimalActivity(animalID)
-	message, err := json.Marshal(activities)
 
-	if err != nil {
-		panic(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(message)
+	sendResponse(w, r, activities)
 }
