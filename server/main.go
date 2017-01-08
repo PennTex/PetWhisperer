@@ -19,6 +19,7 @@ func main() {
 	r.HandleFunc("/animals", getAnimals)
 	r.HandleFunc("/animals/{animalID}", getAnimalByID)
 	r.HandleFunc("/animals/{animalID}/activity", getAnimalActivity)
+
 	http.ListenAndServe(":8080", r)
 }
 
@@ -30,6 +31,7 @@ func getAnimals(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(message)
 }
 
@@ -43,6 +45,7 @@ func getAnimalByID(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(message)
 }
 
@@ -56,5 +59,6 @@ func getAnimalActivity(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(message)
 }

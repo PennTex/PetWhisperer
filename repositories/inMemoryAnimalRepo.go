@@ -13,6 +13,11 @@ var animalDB = []animal.Animal{
 		Typ:  "dog",
 		Name: "Sheba",
 	},
+	{
+		ID:   "5456c603-d5da-11e5-bf26-cec0c932ce01",
+		Typ:  "cat",
+		Name: "Matt",
+	},
 }
 
 type InMemoryAnimalRepo struct{}
