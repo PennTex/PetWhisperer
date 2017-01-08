@@ -3,8 +3,8 @@ package activity_test
 import (
 	"testing"
 
-	"github.com/PennTex/PetWhisperer/activity"
-	"github.com/PennTex/PetWhisperer/animal"
+	"github.com/PennTex/PetWhisperer/models/activity"
+	"github.com/PennTex/PetWhisperer/models/animal"
 	"github.com/stretchr/testify/assert"
 )
 
