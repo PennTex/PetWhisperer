@@ -9,13 +9,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var animalRepo repositories.MemoryRepo
+var animalRepo repositories.InMemoryAnimalRepo
 var animalService = services.NewAnimalService(animalRepo)
+var activityRepo repositories.InMemoryActivityRepo
+var activityService = services.NewActivityService(activityRepo)
 
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/animals", getAnimals)
 	r.HandleFunc("/animals/{animalID}", getAnimalByID)
+	r.HandleFunc("/animals/{animalID}/activity", getAnimalActivity)
 	http.ListenAndServe(":8080", r)
 }
 
@@ -33,8 +36,21 @@ func getAnimals(w http.ResponseWriter, r *http.Request) {
 func getAnimalByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	animalID := vars["animalID"]
-	animal := animalService.GetAnimalByID(animalID)
+	animal := animalService.GetAnimal(animalID)
 	message, err := json.Marshal(animal)
+
+	if err != nil {
+		panic(err)
+	}
+
+	w.Write(message)
+}
+
+func getAnimalActivity(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	animalID := vars["animalID"]
+	activities := activityService.GetAnimalActivity(animalID)
+	message, err := json.Marshal(activities)
 
 	if err != nil {
 		panic(err)

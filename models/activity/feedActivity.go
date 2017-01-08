@@ -1,13 +1,13 @@
 package activity
 
 type FeedActivity struct {
-	*activity
+	*Activity
 	FedBy string
 }
 
 func NewFeedActivity(animal ActivityPerformer, fedBy string) *FeedActivity {
 	return &FeedActivity{
-		activity: newActivity(animal),
+		Activity: newActivity("feed", animal),
 		FedBy:    fedBy,
 	}
 }

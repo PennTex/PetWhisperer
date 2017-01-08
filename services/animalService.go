@@ -6,10 +6,10 @@ import (
 )
 
 type AnimalService struct {
-	animalRepo repositories.AnimalsRepo
+	animalRepo repositories.AnimalRepo
 }
 
-func NewAnimalService(animalRepo repositories.AnimalsRepo) *AnimalService {
+func NewAnimalService(animalRepo repositories.AnimalRepo) *AnimalService {
 	return &AnimalService{
 		animalRepo: animalRepo,
 	}
@@ -19,6 +19,6 @@ func (a *AnimalService) GetAnimals() []animal.Animal {
 	return a.animalRepo.GetAll()
 }
 
-func (a *AnimalService) GetAnimalByID(ID string) *animal.Animal {
+func (a *AnimalService) GetAnimal(ID string) *animal.Animal {
 	return a.animalRepo.Get(ID)
 }
