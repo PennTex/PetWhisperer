@@ -5,14 +5,16 @@ import (
 )
 
 type Animal struct {
-	ID        string
-	Name      string
-	Birthday  int64
-	CreatedAt int64
+	ID        string `json:"id"`
+	Typ       string `json:"type"`
+	Name      string `json:"name"`
+	Birthday  int64  `json:"birthday"`
+	CreatedAt int64  `json:"created_at"`
 }
 
-func newAnimal(name string) *Animal {
+func newAnimal(typ string, name string) *Animal {
 	return &Animal{
+		Typ:       typ,
 		Name:      name,
 		Birthday:  0,
 		CreatedAt: time.Now().Unix(),

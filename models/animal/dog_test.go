@@ -12,6 +12,7 @@ func TestDog_New(t *testing.T) {
 	max := animal.NewDog(dogName)
 
 	assert.Equal(t, max.Name, dogName)
+	assert.Equal(t, max.Typ, "dog")
 	assert.True(t, max.CreatedAt > 0)
 }
 

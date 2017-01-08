@@ -7,7 +7,7 @@ type Dog struct {
 
 func NewDog(name string) *Dog {
 	return &Dog{
-		Animal: newAnimal(name),
+		Animal: newAnimal("dog", name),
 	}
 }
 

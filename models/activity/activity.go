@@ -3,9 +3,9 @@ package activity
 import "time"
 
 type Activity struct {
-	Typ       string
-	AnimalID  string
-	CreatedAt int64
+	Typ       string `json:"type"`
+	AnimalID  string `json:"animal_id"`
+	CreatedAt int64  `json:"created_at"`
 }
 
 type ActivityPerformer interface {
