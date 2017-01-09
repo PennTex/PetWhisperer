@@ -1,13 +1,13 @@
 package activity
 
 type FeedActivity struct {
-	*Activity
-	FedBy string
+	*ActivityBase
+	FedBy string `json:"fed_by"`
 }
 
-func NewFeedActivity(animal ActivityPerformer, fedBy string) *FeedActivity {
+func NewFeedActivity(animalID string, fedBy string) *FeedActivity {
 	return &FeedActivity{
-		Activity: newActivity("feed", animal),
-		FedBy:    fedBy,
+		ActivityBase: newActivity(animalID, "feed"),
+		FedBy:        fedBy,
 	}
 }

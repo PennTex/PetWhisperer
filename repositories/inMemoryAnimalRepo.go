@@ -2,11 +2,11 @@ package repositories
 
 import "github.com/PennTex/PetWhisperer/models/animal"
 
-var animalDB = create()
+var animalDB = createAnimals()
 
 type InMemoryAnimalRepo struct{}
 
-func create() []animal.Animal {
+func createAnimals() []animal.Animal {
 	animals := []animal.Animal{}
 
 	var shawnee = animal.NewDog("shawnee")

@@ -18,3 +18,7 @@ func NewActivityService(activityRepo repositories.ActivityRepo) *ActivityService
 func (a *ActivityService) GetAnimalActivity(animalID string) []activity.Activity {
 	return a.activityRepo.GetByAnimalID(animalID)
 }
+
+func (a *ActivityService) CreateActivity(theActivity activity.Activity) error {
+	return a.activityRepo.Create(theActivity)
+}

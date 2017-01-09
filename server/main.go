@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/PennTex/PetWhisperer/models/activity"
 	"github.com/PennTex/PetWhisperer/repositories"
 	"github.com/PennTex/PetWhisperer/services"
 	"github.com/gorilla/mux"
@@ -20,9 +21,13 @@ type Response struct {
 
 func main() {
 	r := mux.NewRouter()
+
 	r.HandleFunc("/animals", getAnimals)
-	r.HandleFunc("/animals/{animalID}", getAnimalByID)
-	r.HandleFunc("/animals/{animalID}/activity", getAnimalActivity)
+	r.HandleFunc("/animals/{animalID}", getAnimal)
+	r.HandleFunc("/animals/{animalID}/activity", getAnimalActivity).
+		Methods("GET")
+	r.HandleFunc("/animals/{animalID}/activity", createActivity).
+		Methods("POST")
 
 	http.ListenAndServe(":8080", r)
 }
@@ -46,7 +51,7 @@ func getAnimals(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, r, animals)
 }
 
-func getAnimalByID(w http.ResponseWriter, r *http.Request) {
+func getAnimal(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	animalID := vars["animalID"]
 	animal := animalService.GetAnimal(animalID)
@@ -60,4 +65,29 @@ func getAnimalActivity(w http.ResponseWriter, r *http.Request) {
 	activities := activityService.GetAnimalActivity(animalID)
 
 	sendResponse(w, r, activities)
+}
+
+func createActivity(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	animalID := vars["animalID"]
+	decoder := json.NewDecoder(r.Body)
+
+	var activityPost struct {
+		Type    string `json:"type"`
+		FedBy   string `json:"fed_by"`
+		GivenBy string `json:"given_by"`
+	}
+	err := decoder.Decode(&activityPost)
+
+	if err != nil {
+		panic(err)
+	}
+
+	if activityPost.Type == "feed" {
+		theActivity := activity.NewFeedActivity(animalID, activityPost.FedBy)
+		_ = activityService.CreateActivity(theActivity)
+	} else if activityPost.Type == "medication" {
+		theActivity := activity.NewMedicationActivity(animalID, activityPost.GivenBy)
+		_ = activityService.CreateActivity(theActivity)
+	}
 }
