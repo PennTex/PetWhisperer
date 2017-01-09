@@ -7,6 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFeedActivity_ImplementsActivity(t *testing.T) {
+	var _ activity.Activity = activity.FeedActivity{}
+}
+
 func TestFeedActivity_New(t *testing.T) {
 	activity := activity.NewFeedActivity("DOGID", "Mario")
 

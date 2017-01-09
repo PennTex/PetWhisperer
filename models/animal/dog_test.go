@@ -7,6 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestDog_ImplementsAnimal(t *testing.T) {
+	var _ animal.Animal = animal.Dog{}
+}
+
 func TestDog_New(t *testing.T) {
 	dogName := "Max"
 	max := animal.NewDog(dogName)
