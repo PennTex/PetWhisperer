@@ -18,6 +18,7 @@ func TestDog_New(t *testing.T) {
 
 func TestDog_GetBreed(t *testing.T) {
 	max := animal.NewDog("Max")
+
 	breed := max.GetBreed()
 
 	assert.True(t, len(breed) == 0)

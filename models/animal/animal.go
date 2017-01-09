@@ -2,9 +2,11 @@ package animal
 
 import (
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
-type Animal struct {
+type AnimalBase struct {
 	ID        string `json:"id"`
 	Typ       string `json:"type"`
 	Name      string `json:"name"`
@@ -12,8 +14,13 @@ type Animal struct {
 	CreatedAt int64  `json:"created_at"`
 }
 
-func newAnimal(typ string, name string) *Animal {
-	return &Animal{
+type Animal interface {
+	GetID() string
+}
+
+func newAnimal(typ string, name string) *AnimalBase {
+	return &AnimalBase{
+		ID:        uuid.NewV4().String(),
 		Typ:       typ,
 		Name:      name,
 		Birthday:  0,
@@ -21,6 +28,6 @@ func newAnimal(typ string, name string) *Animal {
 	}
 }
 
-func (a *Animal) GetID() string {
+func (a *AnimalBase) GetID() string {
 	return a.ID
 }

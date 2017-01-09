@@ -1,20 +1,21 @@
 package animal
 
 type Dog struct {
-	*Animal
-	breed []string
+	*AnimalBase
+	Breed []string `json:"breed"`
 }
 
 func NewDog(name string) *Dog {
 	return &Dog{
-		Animal: newAnimal("dog", name),
+		AnimalBase: newAnimal("dog", name),
+		Breed:      []string{},
 	}
 }
 
 func (d *Dog) GetBreed() []string {
-	return d.breed
+	return d.Breed
 }
 
 func (d *Dog) SetBreed(breed []string) {
-	d.breed = breed
+	d.Breed = breed
 }
