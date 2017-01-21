@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/PennTex/PetWhisperer/models/activity"
@@ -29,7 +30,7 @@ func main() {
 	r.HandleFunc("/animals/{animalID}/activity", createActivity).
 		Methods("POST")
 
-	http.ListenAndServe(":8080", r)
+	log.Fatal(http.ListenAndServe(":8081", r))
 }
 
 func sendResponse(w http.ResponseWriter, r *http.Request, data interface{}) {

@@ -11,5 +11,5 @@ Start the server
 
 hit an endpoint
 ```bash
-  $ curl localhost:8080/animals
+  $ curl localhost:8081/animals
 ```
