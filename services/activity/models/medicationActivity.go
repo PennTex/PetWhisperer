@@ -1,4 +1,4 @@
-package activity
+package models
 
 type MedicationActivity struct {
 	*ActivityBase

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/PennTex/PetWhisperer/models/activity"
+	"github.com/PennTex/PetWhisperer/services/activity/models"
 	"github.com/gorilla/mux"
 )
 
@@ -24,25 +24,14 @@ func sendResponse(w http.ResponseWriter, r *http.Request, status int, data inter
 	w.Write(message)
 }
 
-func getAnimals(w http.ResponseWriter, r *http.Request) {
-	animals := animalService.GetAnimals()
-	sendResponse(w, r, http.StatusOK, animals)
-}
-
-func getAnimal(w http.ResponseWriter, r *http.Request) {
+func getAnimalActivities(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
-	animal := animalService.GetAnimal(animalID)
-	sendResponse(w, r, http.StatusOK, animal)
-}
-
-func getAnimalActivity(w http.ResponseWriter, r *http.Request) {
-	animalID := mux.Vars(r)["animalID"]
-	activities := activityService.GetAnimalActivity(animalID)
+	activities := activityService.GetActivitiesByAnimalID(animalID)
 
 	sendResponse(w, r, http.StatusOK, activities)
 }
 
-func createActivity(w http.ResponseWriter, r *http.Request) {
+func postActivity(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
 	decoder := json.NewDecoder(r.Body)
 
@@ -58,9 +47,9 @@ func createActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if activityPost.Type == "feed" {
-		err = activityService.CreateActivity(activity.NewFeedActivity(animalID, activityPost.FedBy))
+		err = activityService.CreateActivity(models.NewFeedActivity(animalID, activityPost.FedBy))
 	} else if activityPost.Type == "medication" {
-		err = activityService.CreateActivity(activity.NewMedicationActivity(animalID, activityPost.GivenBy))
+		err = activityService.CreateActivity(models.NewMedicationActivity(animalID, activityPost.GivenBy))
 	} else {
 		sendResponse(w, r, http.StatusBadRequest, "Activity type not supported.")
 		return

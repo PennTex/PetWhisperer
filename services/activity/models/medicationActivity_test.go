@@ -1,18 +1,18 @@
-package activity_test
+package models_test
 
 import (
 	"testing"
 
-	"github.com/PennTex/PetWhisperer/models/activity"
+	"github.com/PennTex/PetWhisperer/services/activity/models"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMedicationActivity_ImplementsActivity(t *testing.T) {
-	var _ activity.Activity = activity.MedicationActivity{}
+	var _ models.Activity = models.MedicationActivity{}
 }
 
 func TestMedicationActivity_New(t *testing.T) {
-	activity := activity.NewMedicationActivity("DOGID", "Mario")
+	activity := models.NewMedicationActivity("DOGID", "Mario")
 
 	assert.True(t, activity.CreatedAt > 0)
 	assert.True(t, activity.Typ == "medication")

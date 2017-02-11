@@ -1,4 +1,4 @@
-package animal
+package models
 
 type Bird struct {
 	*AnimalBase

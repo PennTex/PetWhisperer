@@ -1,19 +1,19 @@
-package animal_test
+package models_test
 
 import (
 	"testing"
 
-	"github.com/PennTex/PetWhisperer/models/animal"
+	"github.com/PennTex/PetWhisperer/services/animal/models"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDog_ImplementsAnimal(t *testing.T) {
-	var _ animal.Animal = animal.Dog{}
+	var _ models.Animal = models.Dog{}
 }
 
 func TestDog_New(t *testing.T) {
 	dogName := "Max"
-	max := animal.NewDog(dogName)
+	max := models.NewDog(dogName)
 
 	assert.Equal(t, max.Name, dogName)
 	assert.Equal(t, max.Typ, "dog")
@@ -21,7 +21,7 @@ func TestDog_New(t *testing.T) {
 }
 
 func TestDog_GetBreed(t *testing.T) {
-	max := animal.NewDog("Max")
+	max := models.NewDog("Max")
 
 	breed := max.GetBreed()
 
@@ -29,7 +29,7 @@ func TestDog_GetBreed(t *testing.T) {
 }
 
 func TestDog_SetBreed(t *testing.T) {
-	max := animal.NewDog("Max")
+	max := models.NewDog("Max")
 	breed := []string{"lab", "pit"}
 	max.SetBreed(breed)
 

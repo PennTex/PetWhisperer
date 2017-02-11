@@ -1,19 +1,19 @@
-package animal_test
+package models_test
 
 import (
 	"testing"
 
-	"github.com/PennTex/PetWhisperer/models/animal"
+	"github.com/PennTex/PetWhisperer/services/animal/models"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBird_ImplementsAnimal(t *testing.T) {
-	var _ animal.Animal = animal.Bird{}
+	var _ models.Animal = models.Bird{}
 }
 
 func TestBird_New(t *testing.T) {
 	birdName := "Fluffy"
-	tweety := animal.NewBird(birdName)
+	tweety := models.NewBird(birdName)
 
 	assert.Equal(t, tweety.Name, birdName)
 	assert.Equal(t, tweety.Typ, "bird")

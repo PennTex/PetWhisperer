@@ -1,4 +1,4 @@
-package activity
+package models
 
 type FeedActivity struct {
 	*ActivityBase
