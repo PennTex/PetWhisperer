@@ -5,13 +5,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/PennTex/PetWhisperer/services/activity/repositories"
+	"fmt"
+
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
-
-var activityRepo repositories.InMemoryActivityRepository
-var activityService = NewActivitiesService(activityRepo)
 
 type Response struct {
 	Data interface{} `json:"data"`
@@ -20,7 +18,7 @@ type Response struct {
 func main() {
 	r := mux.NewRouter().StrictSlash(true)
 
-	r.HandleFunc("/", getAnimalActivities).
+	r.HandleFunc("/{animalID:[0-9a-z-]{36}}", getAnimalActivities).
 		Methods("GET")
 	r.HandleFunc("/", postActivity).
 		Methods("POST")
@@ -28,5 +26,6 @@ func main() {
 	router := handlers.LoggingHandler(os.Stdout, r)
 	router = handlers.RecoveryHandler()(router)
 
-	log.Fatal(http.ListenAndServe(":8081", router))
+	fmt.Println("activity service listening on port 8082")
+	log.Fatal(http.ListenAndServe(":8082", router))
 }

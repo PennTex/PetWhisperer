@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/PennTex/PetWhisperer/services/animal/repositories"
 	"github.com/gorilla/mux"
 )
+
+var animalRepo repositories.InMemoryAnimalRepository
 
 func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	response := Response{
@@ -24,12 +27,12 @@ func sendResponse(w http.ResponseWriter, r *http.Request, status int, data inter
 }
 
 func getAnimals(w http.ResponseWriter, r *http.Request) {
-	animals := animalService.GetAnimals()
+	animals := animalRepo.GetAll()
 	sendResponse(w, r, http.StatusOK, animals)
 }
 
 func getAnimal(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
-	animal := animalService.GetAnimal(animalID)
+	animal := animalRepo.Get(animalID)
 	sendResponse(w, r, http.StatusOK, animal)
 }

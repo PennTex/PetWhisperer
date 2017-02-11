@@ -5,8 +5,11 @@ import (
 	"net/http"
 
 	"github.com/PennTex/PetWhisperer/services/activity/models"
+	"github.com/PennTex/PetWhisperer/services/activity/repositories"
 	"github.com/gorilla/mux"
 )
+
+var activityRepo repositories.InMemoryActivityRepository
 
 func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	response := Response{
@@ -26,7 +29,7 @@ func sendResponse(w http.ResponseWriter, r *http.Request, status int, data inter
 
 func getAnimalActivities(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
-	activities := activityService.GetActivitiesByAnimalID(animalID)
+	activities := activityRepo.GetByAnimalID(animalID)
 
 	sendResponse(w, r, http.StatusOK, activities)
 }
@@ -47,9 +50,9 @@ func postActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if activityPost.Type == "feed" {
-		err = activityService.CreateActivity(models.NewFeedActivity(animalID, activityPost.FedBy))
+		err = activityRepo.Create(models.NewFeedActivity(animalID, activityPost.FedBy))
 	} else if activityPost.Type == "medication" {
-		err = activityService.CreateActivity(models.NewMedicationActivity(animalID, activityPost.GivenBy))
+		err = activityRepo.Create(models.NewMedicationActivity(animalID, activityPost.GivenBy))
 	} else {
 		sendResponse(w, r, http.StatusBadRequest, "Activity type not supported.")
 		return
