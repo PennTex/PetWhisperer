@@ -1,16 +1,33 @@
 package app
 
 import (
-	_ "crypto/sha512"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"os"
 
-	"google.golang.org/appengine"
-
 	"golang.org/x/oauth2"
+	"google.golang.org/appengine"
 )
+
+func IndexHandler(w http.ResponseWriter, r *http.Request) {
+
+	data := struct {
+	}{}
+
+	RenderTemplate(w, "index", data)
+}
+
+func DashboardHandler(w http.ResponseWriter, r *http.Request) {
+
+	session, err := Store.Get(r, "auth-session")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	RenderTemplate(w, "dashboard", session.Values["profile"])
+}
 
 func CallbackHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
@@ -73,6 +90,6 @@ func CallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect to logged in page
-	http.Redirect(w, r, "/user", http.StatusSeeOther)
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 
 }

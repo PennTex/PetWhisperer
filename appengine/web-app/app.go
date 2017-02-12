@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"net/http"
 
+	"github.com/codegangsta/negroni"
 	"github.com/gorilla/sessions"
 )
 
@@ -15,4 +16,8 @@ func init() {
 
 	http.HandleFunc("/", IndexHandler)
 	http.HandleFunc("/callback", CallbackHandler)
+	http.Handle("/dashboard", negroni.New(
+		negroni.HandlerFunc(IsAuthenticated),
+		negroni.Wrap(http.HandlerFunc(DashboardHandler)),
+	))
 }
