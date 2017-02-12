@@ -1,3 +1,3 @@
 serve :
-	goapp serve appengine/activity/app.yaml appengine/animal/app.yaml
+	goapp serve appengine/activity-service/app.yaml appengine/animal-service/app.yaml
 .PHONY: serve

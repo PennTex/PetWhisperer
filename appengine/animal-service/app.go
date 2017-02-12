@@ -1,4 +1,4 @@
-package activity
+package app
 
 import (
 	"net/http"

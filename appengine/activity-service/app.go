@@ -1,4 +1,4 @@
-package animal
+package app
 
 import (
 	"net/http"
