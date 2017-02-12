@@ -7,10 +7,13 @@ import (
 	"net/http"
 	"os"
 
+	"google.golang.org/appengine"
+
 	"golang.org/x/oauth2"
 )
 
 func CallbackHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
 
 	domain := os.Getenv("AUTH0_DOMAIN")
 
@@ -27,14 +30,14 @@ func CallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	code := r.URL.Query().Get("code")
 
-	token, err := conf.Exchange(oauth2.NoContext, code)
+	token, err := conf.Exchange(ctx, code)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// Getting now the userInfo
-	client := conf.Client(oauth2.NoContext, token)
+	client := conf.Client(ctx, token)
 	resp, err := client.Get("https://" + domain + "/userinfo")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
