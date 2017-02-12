@@ -18,16 +18,12 @@ func createActivities() []models.Activity {
 	return activities
 }
 
-func (r InMemoryActivityRepository) GetAll() []models.Activity {
-	return activityDB
-}
-
-func (r InMemoryActivityRepository) Create(theActivity models.Activity) error {
+func (r InMemoryActivityRepository) Create(theActivity models.Activity) (error, *models.Activity) {
 	activityDB = append(activityDB, theActivity)
-	return nil
+	return nil, &theActivity
 }
 
-func (r InMemoryActivityRepository) GetByAnimalID(ID string) []models.Activity {
+func (r InMemoryActivityRepository) GetByAnimalID(ID string) (error, []models.Activity) {
 	var activities []models.Activity
 
 	for _, theActivity := range activityDB {
@@ -38,5 +34,5 @@ func (r InMemoryActivityRepository) GetByAnimalID(ID string) []models.Activity {
 		}
 	}
 
-	return activities
+	return nil, activities
 }

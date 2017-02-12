@@ -19,15 +19,18 @@ func createAnimals() []models.Animal {
 	return animals
 }
 
-func (r InMemoryAnimalRepository) GetAll() []models.Animal {
-	return animalDB
+func (r InMemoryAnimalRepository) GetAll() (error, []models.Animal) {
+	return nil, animalDB
 }
 
-func (r InMemoryAnimalRepository) Get(ID string) *models.Animal {
-	for _, animal := range r.GetAll() {
+func (r InMemoryAnimalRepository) Get(ID string) (error, *models.Animal) {
+	_, animals := r.GetAll()
+
+	for _, animal := range animals {
 		if animal.GetID() == ID {
-			return &animal
+			return nil, &animal
 		}
 	}
-	return nil
+
+	return nil, nil
 }

@@ -10,10 +10,6 @@ import (
 
 var animalRepo repositories.InMemoryAnimalRepository
 
-type Response struct {
-	Data interface{} `json:"data"`
-}
-
 func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	response := Response{
 		Data: data,
@@ -31,12 +27,12 @@ func sendResponse(w http.ResponseWriter, r *http.Request, status int, data inter
 }
 
 func getAnimals(w http.ResponseWriter, r *http.Request) {
-	animals := animalRepo.GetAll()
+	_, animals := animalRepo.GetAll()
 	sendResponse(w, r, http.StatusOK, animals)
 }
 
 func getAnimal(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
-	animal := animalRepo.Get(animalID)
+	_, animal := animalRepo.Get(animalID)
 	sendResponse(w, r, http.StatusOK, animal)
 }

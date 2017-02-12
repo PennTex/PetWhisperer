@@ -8,6 +8,5 @@ import (
 
 func init() {
 	router := api.NewRouter()
-
 	http.Handle("/", router)
 }

@@ -11,10 +11,6 @@ import (
 
 var activityRepo repositories.InMemoryActivityRepository
 
-type Response struct {
-	Data interface{} `json:"data"`
-}
-
 func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	response := Response{
 		Data: data,
@@ -24,7 +20,7 @@ func sendResponse(w http.ResponseWriter, r *http.Request, status int, data inter
 	if err != nil {
 		panic(err)
 	}
-
+	
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
@@ -33,7 +29,7 @@ func sendResponse(w http.ResponseWriter, r *http.Request, status int, data inter
 
 func getAnimalActivities(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
-	activities := activityRepo.GetByAnimalID(animalID)
+	_, activities := activityRepo.GetByAnimalID(animalID)
 
 	sendResponse(w, r, http.StatusOK, activities)
 }
@@ -54,9 +50,9 @@ func postActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if activityPost.Type == "feed" {
-		err = activityRepo.Create(models.NewFeedActivity(animalID, activityPost.FedBy))
+		err, _ = activityRepo.Create(models.NewFeedActivity(animalID, activityPost.FedBy))
 	} else if activityPost.Type == "medication" {
-		err = activityRepo.Create(models.NewMedicationActivity(animalID, activityPost.GivenBy))
+		err, _ = activityRepo.Create(models.NewMedicationActivity(animalID, activityPost.GivenBy))
 	} else {
 		sendResponse(w, r, http.StatusBadRequest, "Activity type not supported.")
 		return
