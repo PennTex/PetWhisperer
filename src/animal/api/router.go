@@ -5,7 +5,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func NewRouter() *mux.Router {
+func GetRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	routerWithV1Routes := v1.RegisterRoutes(*router)
 	return routerWithV1Routes
