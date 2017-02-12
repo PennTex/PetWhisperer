@@ -1,6 +1,6 @@
 package repositories
 
-import "github.com/PennTex/PetWhisperer/services/animal/models"
+import "github.com/PennTex/PetWhisperer/src/animal/models"
 
 type AnimalRepository interface {
 	GetAll() []models.Animal

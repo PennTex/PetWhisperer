@@ -3,7 +3,7 @@ package models_test
 import (
 	"testing"
 
-	"github.com/PennTex/PetWhisperer/services/animal/models"
+	"github.com/PennTex/PetWhisperer/src/animal/models"
 	"github.com/stretchr/testify/assert"
 )
 

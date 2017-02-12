@@ -1,10 +1,10 @@
-package main
+package api
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/PennTex/PetWhisperer/services/animal/repositories"
+	"github.com/PennTex/PetWhisperer/src/animal/repositories"
 	"github.com/gorilla/mux"
 )
 

@@ -1,6 +1,6 @@
 package repositories
 
-import "github.com/PennTex/PetWhisperer/services/activity/models"
+import "github.com/PennTex/PetWhisperer/src/activity/models"
 
 var activityDB = createActivities()
 

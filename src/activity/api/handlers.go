@@ -1,15 +1,19 @@
-package main
+package api
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/PennTex/PetWhisperer/services/activity/models"
-	"github.com/PennTex/PetWhisperer/services/activity/repositories"
+	"github.com/PennTex/PetWhisperer/src/activity/models"
+	"github.com/PennTex/PetWhisperer/src/activity/repositories"
 	"github.com/gorilla/mux"
 )
 
 var activityRepo repositories.InMemoryActivityRepository
+
+type Response struct {
+	Data interface{} `json:"data"`
+}
 
 func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	response := Response{
