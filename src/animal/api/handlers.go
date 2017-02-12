@@ -10,6 +10,10 @@ import (
 
 var animalRepo repositories.InMemoryAnimalRepository
 
+type Response struct {
+	Data interface{} `json:"data"`
+}
+
 func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	response := Response{
 		Data: data,
