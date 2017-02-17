@@ -2,13 +2,20 @@ package v1
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
+	"github.com/PennTex/PetWhisperer/src/animal/models"
 	"github.com/PennTex/PetWhisperer/src/animal/repositories"
 	"github.com/gorilla/mux"
+	"google.golang.org/appengine"
 )
 
-var animalRepo repositories.InMemoryAnimalRepository
+var animalRepo repositories.CloudDatastoreRepository
+
+type Response struct {
+	Data interface{} `json:"data"`
+}
 
 func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	response := Response{
@@ -26,13 +33,31 @@ func sendResponse(w http.ResponseWriter, r *http.Request, status int, data inter
 	w.Write(message)
 }
 
+// TODO: why must i pass a context :(
 func getAnimals(w http.ResponseWriter, r *http.Request) {
-	_, animals := animalRepo.GetAll()
+	ctx := appengine.NewContext(r)
+	animals, _ := animalRepo.Get(ctx)
 	sendResponse(w, r, http.StatusOK, animals)
 }
 
+func postAnimal(w http.ResponseWriter, r *http.Request) {
+	var animal models.Animal
+	b, _ := ioutil.ReadAll(r.Body)
+	ctx := appengine.NewContext(r)
+
+	json.Unmarshal(b, &animal)
+
+	animalID, err := animalRepo.Create(ctx, animal)
+	if err != nil {
+		sendResponse(w, r, http.StatusInternalServerError, err.Error())
+	} else {
+		sendResponse(w, r, http.StatusOK, animalID)
+	}
+}
+
 func getAnimal(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
 	animalID := mux.Vars(r)["animalID"]
-	_, animal := animalRepo.Get(animalID)
+	animal, _ := animalRepo.GetByID(ctx, animalID)
 	sendResponse(w, r, http.StatusOK, animal)
 }

@@ -10,25 +10,6 @@ import (
 	"google.golang.org/appengine"
 )
 
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
-
-	data := struct {
-	}{}
-
-	RenderTemplate(w, "index", data)
-}
-
-func DashboardHandler(w http.ResponseWriter, r *http.Request) {
-
-	session, err := Store.Get(r, "auth-session")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	RenderTemplate(w, "dashboard", session.Values["profile"])
-}
-
 func CallbackHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 

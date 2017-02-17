@@ -1,4 +1,4 @@
-package api
+package v1
 
 import (
 	"encoding/json"
@@ -20,7 +20,7 @@ func sendResponse(w http.ResponseWriter, r *http.Request, status int, data inter
 	if err != nil {
 		panic(err)
 	}
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 

@@ -1,33 +1,21 @@
 package models
 
-import (
-	"time"
+import "time"
 
-	uuid "github.com/satori/go.uuid"
-)
-
-type AnimalBase struct {
-	ID        string `json:"id"`
-	Typ       string `json:"type"`
-	Name      string `json:"name"`
-	Birthday  int64  `json:"birthday"`
-	CreatedAt int64  `json:"created_at"`
+type Animal struct {
+	Typ       string   `json:"type"`
+	Name      string   `json:"name"`
+	Birthday  int64    `json:"birthday"`
+	CreatedAt int64    `json:"created_at"`
+	Owners    []string `json:"owners"`
+	ImageURL  string   `json:"image_url"`
 }
 
-type Animal interface {
-	GetID() string
-}
-
-func newAnimal(typ string, name string) *AnimalBase {
-	return &AnimalBase{
-		ID:        uuid.NewV4().String(),
+func newAnimal(typ string, name string) *Animal {
+	return &Animal{
 		Typ:       typ,
 		Name:      name,
 		Birthday:  0,
 		CreatedAt: time.Now().Unix(),
 	}
-}
-
-func (a *AnimalBase) GetID() string {
-	return a.ID
 }

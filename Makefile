@@ -9,11 +9,8 @@ serve :
 
 deploy :
 	appcfg.py update appengine/web-app/app.yaml appengine/activity-service/app.yaml appengine/animal-service/app.yaml ${ENV_FLAGS}
-	
 .PHONY: deploy
 
 rollback :
 	appcfg.py rollback appengine/web-app/app.yaml appengine/activity-service/app.yaml appengine/animal-service/app.yaml ${ENV_FLAGS}
 .PHONY: rollback
-
-
