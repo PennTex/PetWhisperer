@@ -2,3 +2,27 @@
 <h2>Welcome {{.Nickname}}</h2>
 <h2>Pets {{.Pets}}</h2>
 <button onclick="logout()">log out</button>
+
+<form method="post" enctype="multipart/form-data" action="/books">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input class="form-control" name="name" id="name">
+  </div>
+  <div class="form-group">
+    <label for="type">Type</label>
+    <select name="type" id="name">
+      <option value="dog">dog</option>
+      <option value="cat">cat</option>
+      <option value="bird">bird</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="image">Cover Image</label>
+    <input class="form-control" name="image" id="image" type="file">
+  </div>
+  <button class="btn btn-success">Save</button>
+  <input type="hidden" name="imageURL">
+  <input type="hidden" name="createdBy">
+  <input type="hidden" name="createdByID">
+</form>

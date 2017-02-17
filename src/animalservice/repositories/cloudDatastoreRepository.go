@@ -3,11 +3,10 @@ package repositories
 import (
 	"log"
 	"os"
-	"time"
 
 	"golang.org/x/net/context"
 
-	"github.com/PennTex/PetWhisperer/src/animal/models"
+	"github.com/PennTex/PetWhisperer/src/animalservice/models"
 	uuid "github.com/satori/go.uuid"
 	"google.golang.org/appengine/datastore"
 )
@@ -15,8 +14,6 @@ import (
 type CloudDatastoreRepository struct{}
 
 func (r CloudDatastoreRepository) Create(ctx context.Context, animal models.Animal) (string, error) {
-	animal.CreatedAt = time.Now().Unix()
-
 	key := datastore.NewKey(ctx, "Animal", uuid.NewV4().String(), 0, nil)
 	animalKey, err := datastore.Put(ctx, key, &animal)
 	if err != nil {

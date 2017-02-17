@@ -1,9 +1,6 @@
 package app
 
-import (
-	"encoding/json"
-	"net/http"
-)
+import "net/http"
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -27,14 +24,4 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	RenderTemplate(w, "dashboard", data)
-}
-
-func getAppMetadataFromProfile(profile interface{}) (map[string]interface{}, error) {
-	var app_metadata map[string]interface{}
-
-	if err := json.Unmarshal([]byte(profile.(string)), &app_metadata); err != nil {
-		return nil, err
-	}
-
-	return app_metadata, nil
 }

@@ -72,5 +72,4 @@ func CallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Redirect to logged in page
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
-
 }

@@ -3,7 +3,7 @@ package repositories
 import (
 	"golang.org/x/net/context"
 
-	"github.com/PennTex/PetWhisperer/src/animal/models"
+	"github.com/PennTex/PetWhisperer/src/animalservice/models"
 )
 
 type AnimalRepository interface {

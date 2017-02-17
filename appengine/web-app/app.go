@@ -8,9 +8,17 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var Store *sessions.CookieStore
+var (
+	Store             *sessions.CookieStore
+	StorageBucketName string
+)
 
 func init() {
+	StorageBucketName = "pet-whisperer"
+}
+
+func init() {
+	StorageBucketName = "pet-whisperer"
 	Store = sessions.NewCookieStore([]byte("something-very-secret"))
 	gob.Register(map[string]interface{}{})
 
