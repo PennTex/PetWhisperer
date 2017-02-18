@@ -10,4 +10,5 @@ type AnimalRepository interface {
 	Create(ctx context.Context, animal *models.Animal) (string, error)
 	Get(ctx context.Context) ([]models.Animal, error)
 	GetByID(ctx context.Context, ID string) (*models.Animal, error)
+	GetByOwnerID(ctx context.Context, ID string) ([]models.Animal, error)
 }

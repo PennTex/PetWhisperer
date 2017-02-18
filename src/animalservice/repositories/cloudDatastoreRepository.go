@@ -26,6 +26,18 @@ func (r CloudDatastoreRepository) Get(ctx context.Context) ([]models.Animal, err
 	return nil, nil
 }
 
+func (r CloudDatastoreRepository) GetByOwnerID(ctx context.Context, ID string) ([]models.Animal, error) {
+	query := datastore.NewQuery("Animal").
+		Filter("Owners =", ID)
+
+	var animals []models.Animal
+	if _, err := query.GetAll(ctx, &animals); err != nil {
+		return nil, err
+	}
+
+	return animals, nil
+}
+
 func (r CloudDatastoreRepository) GetByID(ctx context.Context, ID string) (*models.Animal, error) {
 	var animal models.Animal
 	animalKey := datastore.NewKey(ctx, "Animal", ID, 0, nil)

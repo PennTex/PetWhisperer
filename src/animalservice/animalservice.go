@@ -39,6 +39,16 @@ func (s *AnimalService) GetAnimals(ctx context.Context) ([]models.Animal, error)
 	return animals, nil
 }
 
+func (s *AnimalService) GetAnimalsByOwnerID(ctx context.Context, ID string) ([]models.Animal, error) {
+	animals, err := s.animalRepo.GetByOwnerID(ctx, ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return animals, nil
+}
+
 func (s *AnimalService) CreateAnimal(ctx context.Context, animal *models.Animal) (string, error) {
 	animal.CreatedAt = time.Now().Unix()
 
