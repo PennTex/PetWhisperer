@@ -1,17 +1,18 @@
-package animalservice
+package repositories
 
 import (
 	"log"
 
 	"golang.org/x/net/context"
 
+	"github.com/PennTex/PetWhisperer/src/animalservice/models"
 	uuid "github.com/satori/go.uuid"
 	"google.golang.org/appengine/datastore"
 )
 
 type CloudDatastoreRepository struct{}
 
-func (r CloudDatastoreRepository) Create(ctx context.Context, animal *Animal) (string, error) {
+func (r CloudDatastoreRepository) Create(ctx context.Context, animal *models.Animal) (string, error) {
 	key := datastore.NewKey(ctx, "Animal", uuid.NewV4().String(), 0, nil)
 	animalKey, err := datastore.Put(ctx, key, animal)
 	if err != nil {
@@ -21,12 +22,12 @@ func (r CloudDatastoreRepository) Create(ctx context.Context, animal *Animal) (s
 	return animalKey.StringID(), nil
 }
 
-func (r CloudDatastoreRepository) Get(ctx context.Context) ([]Animal, error) {
+func (r CloudDatastoreRepository) Get(ctx context.Context) ([]models.Animal, error) {
 	return nil, nil
 }
 
-func (r CloudDatastoreRepository) GetByID(ctx context.Context, ID string) (*Animal, error) {
-	var animal Animal
+func (r CloudDatastoreRepository) GetByID(ctx context.Context, ID string) (*models.Animal, error) {
+	var animal models.Animal
 	animalKey := datastore.NewKey(ctx, "Animal", ID, 0, nil)
 
 	if err := datastore.Get(ctx, animalKey, &animal); err != nil {

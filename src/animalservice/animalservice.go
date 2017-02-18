@@ -1,16 +1,26 @@
 package animalservice
 
 import (
-	"context"
 	"time"
+
+	"github.com/PennTex/PetWhisperer/src/animalservice/models"
+	"github.com/PennTex/PetWhisperer/src/animalservice/repositories"
+
+	"golang.org/x/net/context"
 )
 
-var animalRepo CloudDatastoreRepository
+type AnimalService struct {
+	animalRepo repositories.AnimalRepository
+}
 
-type AnimalService struct{}
+func NewAnimalService(animalRepo repositories.AnimalRepository) *AnimalService {
+	return &AnimalService{
+		animalRepo: animalRepo,
+	}
+}
 
-func (s *AnimalService) GetAnimal(ctx context.Context, animalID string) (*Animal, error) {
-	animal, err := animalRepo.GetByID(ctx, animalID)
+func (s *AnimalService) GetAnimal(ctx context.Context, animalID string) (*models.Animal, error) {
+	animal, err := s.animalRepo.GetByID(ctx, animalID)
 
 	if err != nil {
 		return nil, err
@@ -19,8 +29,8 @@ func (s *AnimalService) GetAnimal(ctx context.Context, animalID string) (*Animal
 	return animal, nil
 }
 
-func (s *AnimalService) GetAnimals(ctx context.Context) ([]Animal, error) {
-	animals, err := animalRepo.Get(ctx)
+func (s *AnimalService) GetAnimals(ctx context.Context) ([]models.Animal, error) {
+	animals, err := s.animalRepo.Get(ctx)
 
 	if err != nil {
 		return nil, err
@@ -29,10 +39,10 @@ func (s *AnimalService) GetAnimals(ctx context.Context) ([]Animal, error) {
 	return animals, nil
 }
 
-func (s *AnimalService) CreateAnimal(ctx context.Context, animal *Animal) (string, error) {
+func (s *AnimalService) CreateAnimal(ctx context.Context, animal *models.Animal) (string, error) {
 	animal.CreatedAt = time.Now().Unix()
-	animalID, err := animalRepo.Create(ctx, animal)
 
+	animalID, err := s.animalRepo.Create(ctx, animal)
 	if err != nil {
 		return "", err
 	}
