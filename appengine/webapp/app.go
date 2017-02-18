@@ -9,16 +9,10 @@ import (
 )
 
 var (
-	Store             *sessions.CookieStore
-	StorageBucketName string
+	Store *sessions.CookieStore
 )
 
 func init() {
-	StorageBucketName = "pet-whisperer"
-}
-
-func init() {
-	StorageBucketName = "pet-whisperer"
 	Store = sessions.NewCookieStore([]byte("something-very-secret"))
 	gob.Register(map[string]interface{}{})
 
