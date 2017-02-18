@@ -10,13 +10,13 @@ LOCAL_ENV_FLAGS=--env_var AUTH0_DOMAIN=$(PET_WHISPERER_AUTH0_DOMAIN) \
 
 
 serve :
-	dev_appserver.py appengine/web-app/app.yaml appengine/activity-service/app.yaml appengine/animal-service/app.yaml ${LOCAL_ENV_FLAGS}
+	dev_appserver.py appengine/webapp/app.yaml appengine/activityservice/app.yaml appengine/animalservice/app.yaml ${LOCAL_ENV_FLAGS}
 .PHONY: serve
 
 deploy :
-	appcfg.py update appengine/web-app/app.yaml appengine/activity-service/app.yaml appengine/animal-service/app.yaml ${ENV_FLAGS}
+	appcfg.py update appengine/webapp/app.yaml appengine/activityservice/app.yaml appengine/animalservice/app.yaml ${ENV_FLAGS}
 .PHONY: deploy
 
 rollback :
-	appcfg.py rollback appengine/web-app/app.yaml appengine/activity-service/app.yaml appengine/animal-service/app.yaml ${ENV_FLAGS}
+	appcfg.py rollback appengine/webapp/app.yaml appengine/activityservice/app.yaml appengine/animalservice/app.yaml ${ENV_FLAGS}
 .PHONY: rollback
