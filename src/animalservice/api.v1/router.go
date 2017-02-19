@@ -6,12 +6,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func NewRouter(parentRouter *mux.Router) *mux.Router {
+func NewRouter(router *mux.Router) *mux.Router {
 	animalRepository := repositories.CloudDatastoreRepository{}
 	animalService := animalservice.NewAnimalService(animalRepository)
 	animalAPI := NewAnimalAPI(animalService)
-
-	router := parentRouter.PathPrefix("/v1").Subrouter()
 
 	router.HandleFunc("/", animalAPI.PostAnimal).
 		Methods("POST")

@@ -15,7 +15,7 @@ func getPets(w http.ResponseWriter, r *http.Request) {
 	client := urlfetch.Client(ctx)
 	userID := "58a0b42c8c84673f83bc99a9"
 
-	response, err := client.Get(fmt.Sprintf("http://localhost:8081/v1/users/%s/animals", userID))
+	response, err := client.Get(fmt.Sprintf("%s/v1/users/%s/animals", AnimalServiceBasePath, userID))
 	if err != nil {
 		log.Fatal(err)
 	}

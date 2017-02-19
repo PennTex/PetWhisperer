@@ -11,7 +11,9 @@ import (
 
 func init() {
 	router := mux.NewRouter().StrictSlash(true)
-	_ = api.NewRouter(router)
+
+	v1Router := router.PathPrefix("/v1").Subrouter()
+	v1Router = api.NewRouter(v1Router)
 
 	http.Handle("/", authMiddleware(router))
 }
