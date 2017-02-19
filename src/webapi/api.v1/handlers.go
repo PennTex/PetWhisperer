@@ -27,6 +27,10 @@ func getPets(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	w.Header().Set("Access-Control-Allow-Methods", "GET,OPTIONS")
+
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 
