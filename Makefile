@@ -12,13 +12,13 @@ LOCAL_ENV_FLAGS=--env_var AUTHORIZATION_KEY="" \
 
 
 serve :
-	dev_appserver.py appengine/webapp/app.yaml appengine/activityservice/app.yaml appengine/animalservice/app.yaml ${LOCAL_ENV_FLAGS}
+	dev_appserver.py appengine/webapi/app.yaml appengine/animalservice/app.yaml ${LOCAL_ENV_FLAGS}
 .PHONY: serve
 
 deploy :
-	appcfg.py update appengine/webapp/app.yaml appengine/activityservice/app.yaml appengine/animalservice/app.yaml ${ENV_FLAGS}
+	appcfg.py update appengine/webapi/app.yaml appengine/animalservice/app.yaml ${ENV_FLAGS}
 .PHONY: deploy
 
 rollback :
-	appcfg.py rollback appengine/webapp/app.yaml appengine/activityservice/app.yaml appengine/animalservice/app.yaml ${ENV_FLAGS}
+	appcfg.py rollback appengine/webapi/app.yaml appengine/animalservice/app.yaml ${ENV_FLAGS}
 .PHONY: rollback
