@@ -1,4 +1,6 @@
 import React from 'react';
+import Home from './Home';
+import LoggedIn from './LoggedIn';
 
 export default class App extends React.Component {
   componentWillMount() {
