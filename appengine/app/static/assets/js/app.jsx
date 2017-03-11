@@ -33,11 +33,7 @@ var App = React.createClass({
     return idToken;
   },
   render: function() {
-    if (this.state.idToken) {
-      return (<LoggedIn lock={this.lock} idToken={this.state.idToken} />);
-    } else {
-      return (<Home lock={this.lock} />);
-    }
+    
   }
 });
 
