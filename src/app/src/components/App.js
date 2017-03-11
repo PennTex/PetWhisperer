@@ -27,6 +27,7 @@ export default class App extends React.Component {
   getIdToken() {
     var idToken = localStorage.getItem('userToken');
     var authHash = this.lock.parseHash(window.location.hash);
+    
     if (!idToken && authHash) {
       if (authHash.id_token) {
         idToken = authHash.id_token
