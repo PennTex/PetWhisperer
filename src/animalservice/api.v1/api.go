@@ -3,8 +3,9 @@ package api
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
+
+	"google.golang.org/appengine/log"
 
 	"github.com/PennTex/PetWhisperer/src/animalservice"
 	"github.com/PennTex/PetWhisperer/src/animalservice/models"
@@ -89,6 +90,8 @@ func (a *AnimalAPI) PostAnimal(w http.ResponseWriter, r *http.Request) {
 	b, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(b, &animalReq)
 
+	log.Infof(ctx, "Calling AnimalService.CreateAnimal", nil)
+
 	animalID, err := a.AnimalService.CreateAnimal(ctx, &models.Animal{
 		Typ:      animalReq.Typ,
 		Name:     animalReq.Name,
@@ -102,7 +105,7 @@ func (a *AnimalAPI) PostAnimal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("New animal ID: %s", animalID)
+	log.Infof(ctx, "New animal ID: %s", animalID)
 	sendResponse(w, r, http.StatusOK, animalID)
 }
 

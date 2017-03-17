@@ -5,5 +5,5 @@ var (
 )
 
 func init() {
-	AnimalServiceBasePath = "http://localhost:8082"
+	AnimalServiceBasePath = "http://localhost:8081/v1"
 }

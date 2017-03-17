@@ -11,10 +11,10 @@ func NewRouter(router *mux.Router) *mux.Router {
 	animalService := animalservice.NewAnimalService(animalRepository)
 	animalAPI := NewAnimalAPI(animalService)
 
-	router.HandleFunc("/", animalAPI.PostAnimal).
+	router.HandleFunc("/animals", animalAPI.PostAnimal).
 		Methods("POST")
 
-	router.HandleFunc("/", animalAPI.GetAnimals).
+	router.HandleFunc("/animals", animalAPI.GetAnimals).
 		Methods("GET")
 	router.HandleFunc("/{animalID:[0-9a-z-]{36}}", animalAPI.GetAnimal).
 		Methods("GET")
