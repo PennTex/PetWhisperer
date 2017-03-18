@@ -12,14 +12,19 @@ import (
 
 type CloudDatastoreRepository struct{}
 
-func (r CloudDatastoreRepository) Create(ctx context.Context, animal *models.Animal) (string, error) {
-	key := datastore.NewKey(ctx, "Animal", uuid.NewV4().String(), 0, nil)
+var entityKind = "animal"
+
+func (r CloudDatastoreRepository) Create(ctx context.Context, animal *models.Animal) (*models.Animal, error) {
+	key := datastore.NewKey(ctx, entityKind, uuid.NewV4().String(), 0, nil)
+
 	animalKey, err := datastore.Put(ctx, key, animal)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return animalKey.StringID(), nil
+	animal.ID = animalKey.StringID()
+
+	return animal, nil
 }
 
 func (r CloudDatastoreRepository) Get(ctx context.Context) ([]models.Animal, error) {
@@ -27,20 +32,30 @@ func (r CloudDatastoreRepository) Get(ctx context.Context) ([]models.Animal, err
 }
 
 func (r CloudDatastoreRepository) GetByOwnerID(ctx context.Context, ID string) ([]models.Animal, error) {
-	query := datastore.NewQuery("Animal").
-		Filter("Owners =", ID)
-
 	var animals []models.Animal
-	if _, err := query.GetAll(ctx, &animals); err != nil {
+
+	query := datastore.
+		NewQuery(entityKind).
+		Filter("owners =", ID)
+
+	keys, err := query.GetAll(ctx, &animals)
+	if err != nil {
 		return nil, err
 	}
+
+	for i, _ := range animals {
+		animals[i].ID = keys[i].StringID()
+	}
+
+	log.Printf("returned: %s", keys)
 
 	return animals, nil
 }
 
 func (r CloudDatastoreRepository) GetByID(ctx context.Context, ID string) (*models.Animal, error) {
 	var animal models.Animal
-	animalKey := datastore.NewKey(ctx, "Animal", ID, 0, nil)
+
+	animalKey := datastore.NewKey(ctx, entityKind, ID, 0, nil)
 
 	if err := datastore.Get(ctx, animalKey, &animal); err != nil {
 		log.Println(err.Error())

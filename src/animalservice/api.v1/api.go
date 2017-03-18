@@ -35,6 +35,8 @@ func (a *AnimalAPI) GetUsersAnimals(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Infof(ctx, "Animals retrieved: %s", animals)
+
 	sendResponse(w, r, http.StatusOK, animals)
 }
 

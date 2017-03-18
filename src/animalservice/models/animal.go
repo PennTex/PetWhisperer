@@ -1,10 +1,11 @@
 package models
 
 type Animal struct {
-	Typ       string   `json:"type"`
-	Name      string   `json:"name"`
-	Birthday  int64    `json:"birthday"`
-	CreatedAt int64    `json:"created_at"`
-	Owners    []string `json:"owners"`
-	ImageURL  string   `json:"image_url"`
+	ID        string   `datastore:"-" json:"id"`
+	Typ       string   `datastore:"type" json:"type"`
+	Name      string   `datastore:"name" json:"name"`
+	Birthday  int64    `datastore:"birthday" json:"birthday"`
+	CreatedAt int64    `datastore:"created_at" json:"created_at"`
+	Owners    []string `datastore:"owners" json:"owners"`
+	ImageURL  string   `datastore:"image_url" json:"image_url"`
 }

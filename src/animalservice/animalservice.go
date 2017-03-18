@@ -49,13 +49,7 @@ func (s *AnimalService) GetAnimalsByOwnerID(ctx context.Context, ID string) ([]m
 	return animals, nil
 }
 
-func (s *AnimalService) CreateAnimal(ctx context.Context, animal *models.Animal) (string, error) {
+func (s *AnimalService) CreateAnimal(ctx context.Context, animal *models.Animal) (*models.Animal, error) {
 	animal.CreatedAt = time.Now().Unix()
-
-	animalID, err := s.animalRepo.Create(ctx, animal)
-	if err != nil {
-		return "", err
-	}
-
-	return animalID, nil
+	return s.animalRepo.Create(ctx, animal)
 }
