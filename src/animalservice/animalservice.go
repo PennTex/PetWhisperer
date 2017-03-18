@@ -53,3 +53,7 @@ func (s *AnimalService) CreateAnimal(ctx context.Context, animal *models.Animal)
 	animal.CreatedAt = time.Now().Unix()
 	return s.animalRepo.Create(ctx, animal)
 }
+
+func (s *AnimalService) DeleteAnimal(ctx context.Context, ID string) error {
+	return s.animalRepo.Destroy(ctx, ID)
+}

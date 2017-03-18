@@ -48,3 +48,16 @@ func userMiddleware(w http.ResponseWriter, r *http.Request, next http.HandlerFun
 
 	next(w, r)
 }
+
+func corsMiddleware(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	origin := r.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", origin)
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	w.Header().Set("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS")
+
+	if r.Method == "OPTIONS" {
+		return
+	}
+
+	next(w, r)
+}

@@ -11,4 +11,5 @@ type AnimalRepository interface {
 	Get(ctx context.Context) ([]models.Animal, error)
 	GetByID(ctx context.Context, ID string) (*models.Animal, error)
 	GetByOwnerID(ctx context.Context, ID string) ([]models.Animal, error)
+	Destroy(ctx context.Context, ID string) error
 }

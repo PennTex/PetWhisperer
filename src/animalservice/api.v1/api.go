@@ -111,6 +111,20 @@ func (a *AnimalAPI) PostAnimal(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, r, http.StatusOK, animalID)
 }
 
+// DeleteAnimal Deletes an Animal
+func (a *AnimalAPI) DeleteAnimal(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	animalID := mux.Vars(r)["animalID"]
+
+	err := a.AnimalService.DeleteAnimal(ctx, animalID)
+	if err != nil {
+		sendResponse(w, r, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	sendResponse(w, r, http.StatusNoContent, nil)
+}
+
 func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	message, err := json.Marshal(data)
 	if err != nil {

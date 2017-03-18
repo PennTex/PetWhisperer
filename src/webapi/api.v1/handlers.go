@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/gorilla/context"
+	"github.com/gorilla/mux"
 
 	"google.golang.org/appengine/log"
 
@@ -65,14 +66,40 @@ func postPet(w http.ResponseWriter, r *http.Request) {
 
 	response, err := client.Do(req)
 	if err != nil {
-		log.Criticalf(ctx, "could not post animal to animals service: %s", err)
+		log.Criticalf(ctx, "could not post animal to AnimalService: %s", err)
 	}
 
 	defer response.Body.Close()
 
 	responseData, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Criticalf(ctx, "could not read response from animals service: %s", err)
+		log.Criticalf(ctx, "could not read response from AnimalService: %s", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+
+	w.Write(responseData)
+}
+
+func deletePet(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	client := urlfetch.Client(ctx)
+	animalID := mux.Vars(r)["animalID"]
+
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/animals/%s", AnimalServiceBasePath, animalID), nil)
+	req.Header.Add("Authentication", os.Getenv("AUTHORIZATION_KEY"))
+
+	response, err := client.Do(req)
+	if err != nil {
+		log.Criticalf(ctx, "could not delete animal using AnimalService: %s", err)
+	}
+
+	defer response.Body.Close()
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Criticalf(ctx, "could not read response from AnimalService: %s", err)
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
