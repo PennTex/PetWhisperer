@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
@@ -22,7 +21,7 @@ func getPets(w http.ResponseWriter, r *http.Request) {
 	client := urlfetch.Client(ctx)
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/users/%s/animals", AnimalServiceBasePath, context.Get(r, "userID")), nil)
-	req.Header.Add("Authentication", os.Getenv("AUTHORIZATION_KEY"))
+	req.Header.Add("Authentication", ServicesAuthorizationKey)
 
 	response, err := client.Do(req)
 	if err != nil {
@@ -62,7 +61,7 @@ func postPet(w http.ResponseWriter, r *http.Request) {
 	log.Debugf(ctx, "webapi: calling %s", fmt.Sprintf("%s/animals", AnimalServiceBasePath))
 
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/animals", AnimalServiceBasePath), bytes.NewReader(animalAsJSON))
-	req.Header.Add("Authorization", os.Getenv("AUTHORIZATION_KEY"))
+	req.Header.Add("Authorization", ServicesAuthorizationKey)
 
 	response, err := client.Do(req)
 	if err != nil {
@@ -88,7 +87,7 @@ func deletePet(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
 
 	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/animals/%s", AnimalServiceBasePath, animalID), nil)
-	req.Header.Add("Authentication", os.Getenv("AUTHORIZATION_KEY"))
+	req.Header.Add("Authentication", ServicesAuthorizationKey)
 
 	response, err := client.Do(req)
 	if err != nil {

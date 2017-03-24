@@ -3,7 +3,6 @@ package api
 import (
 	"errors"
 	"net/http"
-	"os"
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
@@ -21,7 +20,7 @@ func init() {
 	jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
 		Debug: true,
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			secret := []byte(os.Getenv("AUTH0_CLIENT_SECRET"))
+			secret := []byte(Auth0ClientSecret)
 
 			if len(secret) == 0 {
 				return nil, errors.New("AUTH0_CLIENT_SECRET is not set")
