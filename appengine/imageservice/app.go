@@ -7,5 +7,5 @@ import (
 )
 
 func init() {
-	http.Handle("/v1/", api.New())
+	http.Handle("/", api.New())
 }
