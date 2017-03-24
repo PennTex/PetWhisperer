@@ -7,6 +7,5 @@ import (
 )
 
 func init() {
-	router := api.New()
-	http.Handle("/", router)
+	http.Handle("/", api.New())
 }

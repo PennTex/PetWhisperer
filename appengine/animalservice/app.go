@@ -6,16 +6,10 @@ import (
 	"os"
 
 	"github.com/PennTex/PetWhisperer/src/animalservice/api.v1"
-	"github.com/gorilla/mux"
 )
 
 func init() {
-	router := mux.NewRouter().StrictSlash(true)
-
-	v1Router := router.PathPrefix("/v1").Subrouter()
-	v1Router = api.NewRouter(v1Router)
-
-	http.Handle("/", authMiddleware(router))
+	http.Handle("/", authMiddleware(api.New()))
 }
 
 func authMiddleware(h http.Handler) http.Handler {
