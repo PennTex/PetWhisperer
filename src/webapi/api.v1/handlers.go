@@ -106,3 +106,28 @@ func deletePet(w http.ResponseWriter, r *http.Request) {
 
 	w.Write(responseData)
 }
+
+func postPetImage(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	client := urlfetch.Client(ctx)
+
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/upload", ImageServiceBasePath), r.Body)
+	req.Header.Add("Authorization", ServicesAuthorizationKey)
+
+	response, err := client.Do(req)
+	if err != nil {
+		log.Criticalf(ctx, "could not post image to ImageService: %s", err)
+	}
+
+	defer response.Body.Close()
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Criticalf(ctx, "could not read response from ImageService: %s", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+
+	w.Write(responseData)
+}
