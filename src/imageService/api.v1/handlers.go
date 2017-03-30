@@ -3,6 +3,9 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
 )
 
 type PetInfo struct {
@@ -10,6 +13,17 @@ type PetInfo struct {
 }
 
 func uploadImage(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	r.ParseMultipartForm(32 << 20)
+	file, _, err := r.FormFile("image")
+	if err != nil {
+		log.Errorf(ctx, err.Error(), nil)
+		return
+	}
+
+	defer file.Close()
+
 	sendResponse(w, r, http.StatusOK, struct {
 		PetInfo  PetInfo `json:"petInfo"`
 		ImageURL string  `json:"image_url"`

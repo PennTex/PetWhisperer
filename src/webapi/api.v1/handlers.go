@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 
+	"github.com/PennTex/PetWhisperer/src/webapi/goengine"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 
@@ -108,26 +110,11 @@ func deletePet(w http.ResponseWriter, r *http.Request) {
 }
 
 func postPetImage(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-	client := urlfetch.Client(ctx)
+	url, _ := url.Parse(ImageServiceBasePath)
+	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/upload", ImageServiceBasePath), r.Body)
-	req.Header.Add("Authorization", ServicesAuthorizationKey)
+	r.Header.Add("Authorization", ServicesAuthorizationKey)
+	r.URL.Path = "upload"
 
-	response, err := client.Do(req)
-	if err != nil {
-		log.Criticalf(ctx, "could not post image to ImageService: %s", err)
-	}
-
-	defer response.Body.Close()
-
-	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Criticalf(ctx, "could not read response from ImageService: %s", err)
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-
-	w.Write(responseData)
+	proxy.ServeHTTP(w, r)
 }
