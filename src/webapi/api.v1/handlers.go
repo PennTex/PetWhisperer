@@ -20,35 +20,31 @@ import (
 
 func getPets(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	client := urlfetch.Client(ctx)
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/users/%s/animals", AnimalServiceBasePath, context.Get(r, "userID")), nil)
-	req.Header.Add("Authentication", ServicesAuthorizationKey)
+	url, _ := url.Parse(AnimalServiceBasePath)
+	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	response, err := client.Do(req)
-	if err != nil {
-		log.Criticalf(ctx, "could not get animals from animals service: %s", err)
-	}
+	log.Infof(ctx, "Services Auth Key: %s", ServicesAuthorizationKey)
 
-	defer response.Body.Close()
+	r.Header.Add("Authorization", ServicesAuthorizationKey)
+	r.URL.Path = fmt.Sprintf("/users/%s/animals", context.Get(r, "userID"))
 
-	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Criticalf(ctx, "could not read response from animals service: %s", err)
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-
-	w.Write(responseData)
+	proxy.ServeHTTP(w, r)
 }
 
 func postPet(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	client := urlfetch.Client(ctx)
+
+	url, _ := url.Parse(AnimalServiceBasePath)
+	proxy := goengine.NewSingleHostReverseProxy(url)
+
+	log.Infof(ctx, "Services Auth Key: %s", ServicesAuthorizationKey)
+
 	animalReq := AnimalPostReq{}
 
-	b, _ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	b, err := ioutil.ReadAll(r.Body)
 	json.Unmarshal(b, &animalReq)
 
 	animalReq.Owners = []string{
@@ -60,27 +56,16 @@ func postPet(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	log.Debugf(ctx, "webapi: calling %s", fmt.Sprintf("%s/animals", AnimalServiceBasePath))
+	log.Infof(ctx, "animal bytes %s", animalAsJSON)
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/animals", AnimalServiceBasePath), bytes.NewReader(animalAsJSON))
-	req.Header.Add("Authorization", ServicesAuthorizationKey)
+	buf := bytes.NewBuffer(animalAsJSON)
 
-	response, err := client.Do(req)
-	if err != nil {
-		log.Criticalf(ctx, "could not post animal to AnimalService: %s", err)
-	}
+	r.Header.Add("Authorization", ServicesAuthorizationKey)
+	r.URL.Path = "/animals"
+	r.ContentLength = int64(buf.Len())
+	r.Body = ioutil.NopCloser(buf)
 
-	defer response.Body.Close()
-
-	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Criticalf(ctx, "could not read response from AnimalService: %s", err)
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-
-	w.Write(responseData)
+	proxy.ServeHTTP(w, r)
 }
 
 func deletePet(w http.ResponseWriter, r *http.Request) {
@@ -109,12 +94,12 @@ func deletePet(w http.ResponseWriter, r *http.Request) {
 	w.Write(responseData)
 }
 
-func postPetImage(w http.ResponseWriter, r *http.Request) {
+func postImage(w http.ResponseWriter, r *http.Request) {
 	url, _ := url.Parse(ImageServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
 
 	r.Header.Add("Authorization", ServicesAuthorizationKey)
-	r.URL.Path = "upload"
+	r.URL.Path = "/upload"
 
 	proxy.ServeHTTP(w, r)
 }

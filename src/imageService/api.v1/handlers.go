@@ -2,37 +2,75 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
+	"path"
 
+	uuid "github.com/satori/go.uuid"
+
+	"cloud.google.com/go/storage"
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/file"
 	"google.golang.org/appengine/log"
 )
-
-type PetInfo struct {
-	Type string `json:"type"`
-}
 
 func uploadImage(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	r.ParseMultipartForm(32 << 20)
-	file, _, err := r.FormFile("image")
+	f, fh, err := r.FormFile("image")
+	if err == http.ErrMissingFile {
+		sendResponse(w, r, http.StatusBadRequest, err)
+		return
+	}
 	if err != nil {
-		log.Errorf(ctx, err.Error(), nil)
+		sendResponse(w, r, http.StatusInternalServerError, err)
 		return
 	}
 
-	defer file.Close()
+	// random filename, retaining existing extension.
+	name := uuid.NewV4().String() + path.Ext(fh.Filename)
 
-	sendResponse(w, r, http.StatusOK, struct {
-		PetInfo  PetInfo `json:"petInfo"`
-		ImageURL string  `json:"image_url"`
-	}{
-		PetInfo: PetInfo{
-			Type: "dog",
-		},
-		ImageURL: "https://images-na.ssl-images-amazon.com/images/G/01/img15/pet-products/small-tiles/23695_pets_vertical_store_dogs_small_tile_8._CB312176604_.jpg",
-	})
+	bucket, err := file.DefaultBucketName(ctx)
+	if err != nil {
+		log.Errorf(ctx, "failed to get default GCS bucket name: %v", err)
+		sendResponse(w, r, http.StatusInternalServerError, err)
+		return
+	}
+
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		log.Errorf(ctx, "failed to create client: %v", err)
+		sendResponse(w, r, http.StatusInternalServerError, err)
+		return
+	}
+	defer client.Close()
+
+	log.Infof(ctx, "Using bucket name: %v\n\n", bucket)
+
+	objectWriter := client.Bucket(bucket).Object(name).NewWriter(ctx)
+	objectWriter.ACL = []storage.ACLRule{{Entity: storage.AllUsers, Role: storage.RoleReader}}
+	objectWriter.ContentType = fh.Header.Get("Content-Type")
+
+	// Entries are immutable, be aggressive about caching (1 day).
+	objectWriter.CacheControl = "public, max-age=86400"
+
+	if _, err := io.Copy(objectWriter, f); err != nil {
+		log.Errorf(ctx, "failed to copy file into bucket: %v", err)
+		sendResponse(w, r, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err := objectWriter.Close(); err != nil {
+		log.Errorf(ctx, "failed closing object writer: %v", err)
+		sendResponse(w, r, http.StatusInternalServerError, err)
+		return
+	}
+
+	publicURL := fmt.Sprintf("https://storage.googleapis.com/%s/%s", bucket, name)
+	log.Infof(ctx, "All %s", "success")
+
+	sendResponse(w, r, http.StatusOK, publicURL)
 }
 
 func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {

@@ -19,7 +19,7 @@ func New() http.Handler {
 	router.HandleFunc("/pets", postPet).Methods("POST")
 	router.HandleFunc("/pets/{animalID:[0-9a-z-]{36}}", deletePet).Methods("DELETE")
 
-	router.HandleFunc("/pets/image", postPetImage).Methods("POST")
+	router.HandleFunc("/images", postImage).Methods("POST")
 
 	n.UseHandler(router)
 
