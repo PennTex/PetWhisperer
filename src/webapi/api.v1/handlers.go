@@ -26,7 +26,7 @@ func getPets(w http.ResponseWriter, r *http.Request) {
 
 	log.Infof(ctx, "Services Auth Key: %s", ServicesAuthorizationKey)
 
-	r.Header.Add("Authorization", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", ServicesAuthorizationKey)
 	r.URL.Path = fmt.Sprintf("/users/%s/animals", context.Get(r, "userID"))
 
 	proxy.ServeHTTP(w, r)
@@ -60,7 +60,7 @@ func postPet(w http.ResponseWriter, r *http.Request) {
 
 	buf := bytes.NewBuffer(animalAsJSON)
 
-	r.Header.Add("Authorization", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", ServicesAuthorizationKey)
 	r.URL.Path = "/animals"
 	r.ContentLength = int64(buf.Len())
 	r.Body = ioutil.NopCloser(buf)
@@ -74,7 +74,7 @@ func deletePet(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
 
 	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/animals/%s", AnimalServiceBasePath, animalID), nil)
-	req.Header.Add("Authentication", ServicesAuthorizationKey)
+	req.Header.Add("x-auth", ServicesAuthorizationKey)
 
 	response, err := client.Do(req)
 	if err != nil {
@@ -98,7 +98,7 @@ func postImage(w http.ResponseWriter, r *http.Request) {
 	url, _ := url.Parse(ImageServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	r.Header.Add("Authorization", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", ServicesAuthorizationKey)
 	r.URL.Path = "/upload"
 
 	proxy.ServeHTTP(w, r)

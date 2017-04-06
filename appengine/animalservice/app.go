@@ -3,9 +3,12 @@ package app
 import (
 	"net/http"
 
+	"google.golang.org/appengine"
+
 	"os"
 
 	"github.com/PennTex/PetWhisperer/src/animalservice/api.v1"
+	"google.golang.org/appengine/log"
 )
 
 func init() {
@@ -14,9 +17,13 @@ func init() {
 
 func authMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("Authorization") != os.Getenv("AUTHORIZATION_KEY") {
+		ctx := appengine.NewContext(r)
+
+		if r.Header.Get("x-auth") != os.Getenv("AUTHORIZATION_KEY") {
+			log.Infof(ctx, "%s != %s", r.Header.Get("x-auth"), os.Getenv("AUTHORIZATION_KEY"))
+
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Not Authorized"))
+			w.Write([]byte("Service Not Authorized"))
 			return
 		}
 
