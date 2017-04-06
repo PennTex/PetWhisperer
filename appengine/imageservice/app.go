@@ -3,7 +3,7 @@ package app
 import (
 	"net/http"
 
-	"github.com/PennTex/PetWhisperer/src/imageservice/api.v1"
+	"github.com/PennTex/pet-whisperer/src/imageservice/api.v1"
 )
 
 func init() {

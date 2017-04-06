@@ -3,8 +3,8 @@ package animalservice
 import (
 	"time"
 
-	"github.com/PennTex/PetWhisperer/src/animalservice/models"
-	"github.com/PennTex/PetWhisperer/src/animalservice/repositories"
+	"github.com/PennTex/pet-whisperer/src/animalservice/models"
+	"github.com/PennTex/pet-whisperer/src/animalservice/repositories"
 
 	"golang.org/x/net/context"
 )

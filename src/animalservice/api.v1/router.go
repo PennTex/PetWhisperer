@@ -3,8 +3,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/PennTex/PetWhisperer/src/animalservice"
-	"github.com/PennTex/PetWhisperer/src/animalservice/repositories"
+	"github.com/PennTex/pet-whisperer/src/animalservice"
+	"github.com/PennTex/pet-whisperer/src/animalservice/repositories"
 	"github.com/gorilla/mux"
 )
 

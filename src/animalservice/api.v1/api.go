@@ -7,8 +7,8 @@ import (
 
 	"google.golang.org/appengine/log"
 
-	"github.com/PennTex/PetWhisperer/src/animalservice"
-	"github.com/PennTex/PetWhisperer/src/animalservice/models"
+	"github.com/PennTex/pet-whisperer/src/animalservice"
+	"github.com/PennTex/pet-whisperer/src/animalservice/models"
 	"github.com/gorilla/mux"
 	"google.golang.org/appengine"
 )

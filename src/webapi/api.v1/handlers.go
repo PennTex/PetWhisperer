@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/PennTex/PetWhisperer/src/webapi/goengine"
+	"github.com/PennTex/pet-whisperer/src/webapi/goengine"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 

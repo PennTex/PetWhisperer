@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/PennTex/PetWhisperer/src/animalservice/models"
+	"github.com/PennTex/pet-whisperer/src/animalservice/models"
 	uuid "github.com/satori/go.uuid"
 	"google.golang.org/appengine/datastore"
 )

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/PennTex/PetWhisperer/src/activity/models"
-	"github.com/PennTex/PetWhisperer/src/activity/repositories"
+	"github.com/PennTex/pet-whisperer/src/activity/models"
+	"github.com/PennTex/pet-whisperer/src/activity/repositories"
 	"github.com/gorilla/mux"
 )
 

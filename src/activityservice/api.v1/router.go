@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/PennTex/PetWhisperer/src/activity/api/v1"
+	"github.com/PennTex/pet-whisperer/src/activity/api/v1"
 	"github.com/gorilla/mux"
 )
 

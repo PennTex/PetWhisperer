@@ -7,7 +7,7 @@ import (
 
 	"os"
 
-	"github.com/PennTex/PetWhisperer/src/animalservice/api.v1"
+	"github.com/PennTex/pet-whisperer/src/animalservice/api.v1"
 	"google.golang.org/appengine/log"
 )
 
