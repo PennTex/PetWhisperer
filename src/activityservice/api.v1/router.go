@@ -1,12 +1,16 @@
 package api
 
 import (
-	"github.com/PennTex/pet-whisperer/src/activity/api/v1"
+	"net/http"
+
 	"github.com/gorilla/mux"
 )
 
-func GetRouter() *mux.Router {
-	router := mux.NewRouter().StrictSlash(true)
-	routerWithV1Routes := v1.RegisterRoutes(*router)
-	return routerWithV1Routes
+func New() http.Handler {
+	router := mux.NewRouter()
+
+	router.HandleFunc("/{animalID:[0-9a-z-]{36}}", getAnimalActivities).Methods("GET")
+	router.HandleFunc("/{animalID:[0-9a-z-]{36}}", postActivity).Methods("POST")
+
+	return router
 }

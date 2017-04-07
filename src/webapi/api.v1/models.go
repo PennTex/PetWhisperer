@@ -7,3 +7,10 @@ type AnimalPostReq struct {
 	Owners   []string `json:"owners"`
 	ImageURL string   `json:"image_url"`
 }
+
+type ActivityPostReq struct {
+	Typ  string `json:"type"`
+	By   string `json:"by"`
+	At   string `json:"at"`
+	Note string `json:"note"`
+}

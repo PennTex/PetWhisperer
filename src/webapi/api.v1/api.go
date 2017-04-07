@@ -18,6 +18,8 @@ func New() http.Handler {
 	router.HandleFunc("/pets", getPets).Methods("GET")
 	router.HandleFunc("/pets", postPet).Methods("POST")
 	router.HandleFunc("/pets/{animalID:[0-9a-z-]{36}}", deletePet).Methods("DELETE")
+	router.HandleFunc("/pets/{animalID:[0-9a-z-]{36}}/activities", getPetsActivities).Methods("GET")
+	router.HandleFunc("/pets/{animalID:[0-9a-z-]{36}}/activities", postPetActivity).Methods("POST")
 
 	router.HandleFunc("/images", postImage).Methods("POST")
 

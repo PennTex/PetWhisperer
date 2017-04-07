@@ -11,20 +11,11 @@ import (
 	"github.com/PennTex/pet-whisperer/src/webapi/goengine"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
-
-	"google.golang.org/appengine/log"
-
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/urlfetch"
 )
 
 func getPets(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-
 	url, _ := url.Parse(AnimalServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
-
-	log.Infof(ctx, "Services Auth Key: %s", ServicesAuthorizationKey)
 
 	r.Header.Add("x-auth", ServicesAuthorizationKey)
 	r.URL.Path = fmt.Sprintf("/users/%s/animals", context.Get(r, "userID"))
@@ -33,12 +24,8 @@ func getPets(w http.ResponseWriter, r *http.Request) {
 }
 
 func postPet(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-
 	url, _ := url.Parse(AnimalServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
-
-	log.Infof(ctx, "Services Auth Key: %s", ServicesAuthorizationKey)
 
 	animalReq := AnimalPostReq{}
 
@@ -56,8 +43,6 @@ func postPet(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	log.Infof(ctx, "animal bytes %s", animalAsJSON)
-
 	buf := bytes.NewBuffer(animalAsJSON)
 
 	r.Header.Add("x-auth", ServicesAuthorizationKey)
@@ -69,29 +54,54 @@ func postPet(w http.ResponseWriter, r *http.Request) {
 }
 
 func deletePet(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-	client := urlfetch.Client(ctx)
 	animalID := mux.Vars(r)["animalID"]
+	url, _ := url.Parse(AnimalServiceBasePath)
+	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/animals/%s", AnimalServiceBasePath, animalID), nil)
-	req.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.URL.Path = fmt.Sprintf("/animals/%s", animalID)
 
-	response, err := client.Do(req)
+	proxy.ServeHTTP(w, r)
+}
+
+func getPetsActivities(w http.ResponseWriter, r *http.Request) {
+	animalID := mux.Vars(r)["animalID"]
+	url, _ := url.Parse(ActivityServiceBasePath)
+	proxy := goengine.NewSingleHostReverseProxy(url)
+
+	r.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.URL.Path = fmt.Sprintf("/%s", animalID)
+
+	proxy.ServeHTTP(w, r)
+}
+
+func postPetActivity(w http.ResponseWriter, r *http.Request) {
+	animalID := mux.Vars(r)["animalID"]
+	url, _ := url.Parse(ActivityServiceBasePath)
+	proxy := goengine.NewSingleHostReverseProxy(url)
+
+	activityReq := ActivityPostReq{}
+
+	defer r.Body.Close()
+
+	b, err := ioutil.ReadAll(r.Body)
+	json.Unmarshal(b, &activityReq)
+
+	activityReq.By = context.Get(r, "userID").(string)
+
+	activityAsJSON, err := json.Marshal(activityReq)
 	if err != nil {
-		log.Criticalf(ctx, "could not delete animal using AnimalService: %s", err)
+		panic(err)
 	}
 
-	defer response.Body.Close()
+	buf := bytes.NewBuffer(activityAsJSON)
 
-	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Criticalf(ctx, "could not read response from AnimalService: %s", err)
-	}
+	r.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.URL.Path = fmt.Sprintf("/%s", animalID)
+	r.ContentLength = int64(buf.Len())
+	r.Body = ioutil.NopCloser(buf)
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-
-	w.Write(responseData)
+	proxy.ServeHTTP(w, r)
 }
 
 func postImage(w http.ResponseWriter, r *http.Request) {

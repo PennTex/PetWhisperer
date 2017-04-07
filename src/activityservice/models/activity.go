@@ -2,28 +2,20 @@ package models
 
 import "time"
 
-type ActivityBase struct {
-	Typ       string `json:"type"`
-	AnimalID  string `json:"animal_id"`
-	CreatedAt int64  `json:"created_at"`
+type Activity struct {
+	Typ       string `datastore:"type" json:"type"`
+	AnimalID  string `datastore:"animal_id" json:"animal_id"`
+	CreatedAt int64  `datastore:"created_at" json:"created_at"`
+	By        string `datastore:"by" json:"by"`
+	At        string `datastore:"at" json:"at"`
+	Note      string `datastore:"note" json:"note"`
 }
 
-type Activity interface {
-	GetActivityType() string
-}
-
-type ActivityPerformer interface {
-	GetID() string
-}
-
-func newActivity(animalID string, typ string) *ActivityBase {
-	return &ActivityBase{
+func NewActivity(typ string, animalID string, by string) *Activity {
+	return &Activity{
 		Typ:       typ,
 		AnimalID:  animalID,
 		CreatedAt: time.Now().Unix(),
+		By:        by,
 	}
-}
-
-func (a *ActivityBase) GetActivityType() string {
-	return a.Typ
 }
