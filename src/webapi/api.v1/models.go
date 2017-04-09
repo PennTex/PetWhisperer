@@ -11,6 +11,6 @@ type AnimalPostReq struct {
 type ActivityPostReq struct {
 	Typ  string `json:"type"`
 	By   string `json:"by"`
-	At   string `json:"at"`
+	At   int64  `json:"at"`
 	Note string `json:"note"`
 }

@@ -7,7 +7,7 @@ type Activity struct {
 	AnimalID  string `datastore:"animal_id" json:"animal_id"`
 	CreatedAt int64  `datastore:"created_at" json:"created_at"`
 	By        string `datastore:"by" json:"by"`
-	At        string `datastore:"at" json:"at"`
+	At        int64  `datastore:"at" json:"at"`
 	Note      string `datastore:"note" json:"note"`
 }
 

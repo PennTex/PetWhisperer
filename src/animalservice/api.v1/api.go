@@ -92,8 +92,6 @@ func (a *AnimalAPI) PostAnimal(w http.ResponseWriter, r *http.Request) {
 	b, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(b, &animalReq)
 
-	log.Infof(ctx, "Calling AnimalService.CreateAnimal", nil)
-
 	animalID, err := a.AnimalService.CreateAnimal(ctx, &models.Animal{
 		Typ:      animalReq.Typ,
 		Name:     animalReq.Name,

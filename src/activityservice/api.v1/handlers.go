@@ -49,7 +49,7 @@ func postActivity(w http.ResponseWriter, r *http.Request) {
 	var activityPost struct {
 		Type string `json:"type"`
 		By   string `json:"by"`
-		At   string `json:"at"`
+		At   int64  `json:"at"`
 		Note string `json:"note"`
 	}
 	err := decoder.Decode(&activityPost)
@@ -63,10 +63,12 @@ func postActivity(w http.ResponseWriter, r *http.Request) {
 	if activityPost.Type == "feed" {
 		activity := models.NewActivity("feed", animalID, activityPost.By)
 		activity.Note = activityPost.Note
+		activity.At = activityPost.At
 		createdActivity, err = activityRepo.Create(ctx, activity)
 	} else if activityPost.Type == "medication" {
 		activity := models.NewActivity("medication", animalID, activityPost.By)
 		activity.Note = activityPost.Note
+		activity.At = activityPost.At
 		createdActivity, err = activityRepo.Create(ctx, activity)
 	} else {
 		sendResponse(w, r, http.StatusBadRequest, "Activity type not supported.")
