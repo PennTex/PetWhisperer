@@ -12,9 +12,7 @@ import (
 	"github.com/gorilla/context"
 )
 
-var (
-	jwtMiddleware *jwtmiddleware.JWTMiddleware
-)
+var jwtMiddleware *jwtmiddleware.JWTMiddleware
 
 func init() {
 	jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
