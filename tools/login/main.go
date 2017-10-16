@@ -21,7 +21,7 @@ func main() {
 
 	url := "https://pet-whisperer.auth0.com/oauth/token"
 
-	payload := strings.NewReader("{\"grant_type\":\"password\",\"username\": \"" + username + "\",\"password\": \"" + password + "\",\"audience\": \"api.pet-whisperer.com\", \"scope\": \"read:sample\", \"client_id\": \"" + auth0ClientID + "\", \"client_secret\": \"" + auth0ClientSecret + "\"}")
+	payload := strings.NewReader("{\"grant_type\":\"password\",\"username\": \"" + username + "\",\"password\": \"" + password + "\",\"audience\": \"api.pet-whisperer.com\", \"client_id\": \"" + auth0ClientID + "\", \"client_secret\": \"" + auth0ClientSecret + "\"}")
 
 	req, _ := http.NewRequest("POST", url, payload)
 
