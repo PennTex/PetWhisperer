@@ -9,7 +9,6 @@ import (
 	"net/url"
 
 	"github.com/PennTex/pet-whisperer/src/webapi/goengine"
-	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 )
 
@@ -18,7 +17,7 @@ func getPets(w http.ResponseWriter, r *http.Request) {
 	proxy := goengine.NewSingleHostReverseProxy(url)
 
 	r.Header.Add("x-auth", ServicesAuthorizationKey)
-	r.URL.Path = fmt.Sprintf("/users/%s/animals", context.Get(r, "userID"))
+	r.URL.Path = fmt.Sprintf("/users/%s/animals", r.Context().Value("userID").(string))
 
 	proxy.ServeHTTP(w, r)
 }
@@ -35,7 +34,7 @@ func postPet(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(b, &animalReq)
 
 	animalReq.Owners = []string{
-		context.Get(r, "userID").(string),
+		r.Context().Value("userID").(string),
 	}
 
 	animalAsJSON, err := json.Marshal(animalReq)
@@ -87,7 +86,7 @@ func postPetActivity(w http.ResponseWriter, r *http.Request) {
 	b, err := ioutil.ReadAll(r.Body)
 	json.Unmarshal(b, &activityReq)
 
-	activityReq.By = context.Get(r, "userID").(string)
+	activityReq.By = r.Context().Value("userID").(string)
 
 	activityAsJSON, err := json.Marshal(activityReq)
 	if err != nil {

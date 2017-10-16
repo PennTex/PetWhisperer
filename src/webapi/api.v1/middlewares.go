@@ -1,15 +1,14 @@
 package api
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/log"
-
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/gorilla/context"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
 )
 
 var jwtMiddleware *jwtmiddleware.JWTMiddleware
@@ -26,12 +25,13 @@ func init() {
 
 			return secret, nil
 		},
+		SigningMethod: jwt.SigningMethodHS256,
 	})
 }
 
 func userMiddleware(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	ctx := appengine.NewContext(r)
-	user := context.Get(r, "user").(*jwt.Token)
+	user := r.Context().Value("user").(*jwt.Token)
 
 	for k, v := range user.Claims.(jwt.MapClaims) {
 		log.Infof(ctx, "Auth0 Claim %s: \t%#v\n", k, v)
@@ -41,7 +41,8 @@ func userMiddleware(w http.ResponseWriter, r *http.Request, next http.HandlerFun
 
 	log.Infof(ctx, "UserID: %s", userID)
 
-	context.Set(r, "userID", userID)
+	newRequest := r.WithContext(context.WithValue(r.Context(), "userID", userID))
+	*r = *newRequest
 
 	next(w, r)
 }

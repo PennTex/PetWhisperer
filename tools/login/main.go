@@ -13,8 +13,8 @@ import (
 
 func main() {
 
-	auth0ClientID := os.Getenv("PET_WHISPERER_AUTH0_CLIENT_ID")
-	auth0ClientSecret := os.Getenv("PET_WHISPERER_AUTH0_CLIENT_SECRET")
+	auth0ClientID := "ys9ncsImAicfvkbsHbDnpF2aZ63uur3N"
+	auth0ClientSecret := os.Getenv("PET_WHISPERER_AUTH0_CLI_CLIENT_SECRET")
 
 	username := os.Args[1]
 	password := os.Args[2]
