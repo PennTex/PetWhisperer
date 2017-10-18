@@ -1,4 +1,4 @@
-package api
+package webapi
 
 import (
 	"bytes"
@@ -8,25 +8,26 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/PennTex/pet-whisperer/src/webapi/goengine"
+	"goengine"
+
 	"github.com/gorilla/mux"
 )
 
-func getPets(w http.ResponseWriter, r *http.Request) {
-	url, _ := url.Parse(AnimalServiceBasePath)
+func handleGetPets(w http.ResponseWriter, r *http.Request) {
+	url, _ := url.Parse(animalServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	r.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", servicesAuthorizationKey)
 	r.URL.Path = fmt.Sprintf("/users/%s/animals", r.Context().Value("userID").(string))
 
 	proxy.ServeHTTP(w, r)
 }
 
-func postPet(w http.ResponseWriter, r *http.Request) {
-	url, _ := url.Parse(AnimalServiceBasePath)
+func handlePostPet(w http.ResponseWriter, r *http.Request) {
+	url, _ := url.Parse(animalServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	animalReq := AnimalPostReq{}
+	animalReq := animalPostReq{}
 
 	defer r.Body.Close()
 
@@ -44,7 +45,7 @@ func postPet(w http.ResponseWriter, r *http.Request) {
 
 	buf := bytes.NewBuffer(animalAsJSON)
 
-	r.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", servicesAuthorizationKey)
 	r.URL.Path = "/animals"
 	r.ContentLength = int64(buf.Len())
 	r.Body = ioutil.NopCloser(buf)
@@ -52,34 +53,34 @@ func postPet(w http.ResponseWriter, r *http.Request) {
 	proxy.ServeHTTP(w, r)
 }
 
-func deletePet(w http.ResponseWriter, r *http.Request) {
+func handleDeletePet(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
-	url, _ := url.Parse(AnimalServiceBasePath)
+	url, _ := url.Parse(animalServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	r.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", servicesAuthorizationKey)
 	r.URL.Path = fmt.Sprintf("/animals/%s", animalID)
 
 	proxy.ServeHTTP(w, r)
 }
 
-func getPetsActivities(w http.ResponseWriter, r *http.Request) {
+func handleGetPetsActivities(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
-	url, _ := url.Parse(ActivityServiceBasePath)
+	url, _ := url.Parse(activityServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	r.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", servicesAuthorizationKey)
 	r.URL.Path = fmt.Sprintf("/%s", animalID)
 
 	proxy.ServeHTTP(w, r)
 }
 
-func postPetActivity(w http.ResponseWriter, r *http.Request) {
+func handlePostPetActivity(w http.ResponseWriter, r *http.Request) {
 	animalID := mux.Vars(r)["animalID"]
-	url, _ := url.Parse(ActivityServiceBasePath)
+	url, _ := url.Parse(activityServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	activityReq := ActivityPostReq{}
+	activityReq := activityPostReq{}
 
 	defer r.Body.Close()
 
@@ -95,7 +96,7 @@ func postPetActivity(w http.ResponseWriter, r *http.Request) {
 
 	buf := bytes.NewBuffer(activityAsJSON)
 
-	r.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", servicesAuthorizationKey)
 	r.URL.Path = fmt.Sprintf("/%s", animalID)
 	r.ContentLength = int64(buf.Len())
 	r.Body = ioutil.NopCloser(buf)
@@ -103,11 +104,11 @@ func postPetActivity(w http.ResponseWriter, r *http.Request) {
 	proxy.ServeHTTP(w, r)
 }
 
-func postImage(w http.ResponseWriter, r *http.Request) {
-	url, _ := url.Parse(ImageServiceBasePath)
+func handlePostImage(w http.ResponseWriter, r *http.Request) {
+	url, _ := url.Parse(imageServiceBasePath)
 	proxy := goengine.NewSingleHostReverseProxy(url)
 
-	r.Header.Add("x-auth", ServicesAuthorizationKey)
+	r.Header.Add("x-auth", servicesAuthorizationKey)
 	r.URL.Path = "/upload"
 
 	proxy.ServeHTTP(w, r)

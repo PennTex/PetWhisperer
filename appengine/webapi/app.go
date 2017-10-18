@@ -3,9 +3,9 @@ package app
 import (
 	"net/http"
 
-	api "github.com/PennTex/pet-whisperer/src/webapi/api"
+	"github.com/PennTex/pet-whisperer/src/webapi"
 )
 
 func init() {
-	http.Handle("/", api.New())
+	http.Handle("/", webapi.New())
 }

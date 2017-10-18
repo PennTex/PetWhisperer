@@ -3,9 +3,9 @@ package app
 import (
 	"net/http"
 
-	"github.com/PennTex/pet-whisperer/src/imageservice/api"
+	"github.com/PennTex/pet-whisperer/src/imageservice"
 )
 
 func init() {
-	http.Handle("/", api.New())
+	http.Handle("/", imageservice.New())
 }
