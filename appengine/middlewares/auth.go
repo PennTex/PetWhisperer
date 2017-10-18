@@ -1,3 +1,4 @@
+// Package middleware contains shared middleware between appengine services
 package middleware
 
 import (

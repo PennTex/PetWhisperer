@@ -4,32 +4,24 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"google.golang.org/appengine/log"
 
-	"github.com/PennTex/pet-whisperer/src/animalservice"
 	"github.com/PennTex/pet-whisperer/src/animalservice/models"
+	"github.com/PennTex/pet-whisperer/src/animalservice/repositories"
 	"github.com/gorilla/mux"
 	"google.golang.org/appengine"
 )
 
-type AnimalAPI struct {
-	AnimalService *animalservice.AnimalService
-}
+var animalRepo repositories.CloudDatastoreRepository
 
-// NewAnimalAPI Creates a new Animal API
-func NewAnimalAPI(service *animalservice.AnimalService) *AnimalAPI {
-	return &AnimalAPI{
-		AnimalService: service,
-	}
-}
-
-// GetUsersAnimals Gets all animals owned by the given user
-func (a *AnimalAPI) GetUsersAnimals(w http.ResponseWriter, r *http.Request) {
+func getUsersAnimals(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	ownerID := mux.Vars(r)["userID"]
 
-	animals, err := a.AnimalService.GetAnimalsByOwnerID(ctx, ownerID)
+	animals, err := animalRepo.GetByOwnerID(ctx, ownerID)
+
 	if err != nil {
 		sendResponse(w, r, http.StatusInternalServerError, err.Error())
 		return
@@ -40,8 +32,7 @@ func (a *AnimalAPI) GetUsersAnimals(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, r, http.StatusOK, animals)
 }
 
-// GetAnimals Gets all animals, or specific animals if animalID query param is passed in.
-func (a *AnimalAPI) GetAnimals(w http.ResponseWriter, r *http.Request) {
+func getAnimals(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	animalIDs := r.URL.Query()["animalID"]
 
@@ -49,7 +40,8 @@ func (a *AnimalAPI) GetAnimals(w http.ResponseWriter, r *http.Request) {
 		var animals []models.Animal
 
 		for _, animalID := range animalIDs {
-			animal, err := a.AnimalService.GetAnimal(ctx, animalID)
+			animal, err := animalRepo.GetByID(ctx, animalID)
+
 			if err != nil {
 				sendResponse(w, r, http.StatusInternalServerError, err.Error())
 				return
@@ -60,7 +52,8 @@ func (a *AnimalAPI) GetAnimals(w http.ResponseWriter, r *http.Request) {
 
 		sendResponse(w, r, http.StatusOK, animals)
 	} else {
-		animals, err := a.AnimalService.GetAnimals(ctx)
+		animals, err := animalRepo.Get(ctx)
+
 		if err != nil {
 			sendResponse(w, r, http.StatusInternalServerError, err.Error())
 			return
@@ -70,12 +63,12 @@ func (a *AnimalAPI) GetAnimals(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GetAnimal Gets a single animal by its ID.
-func (a *AnimalAPI) GetAnimal(w http.ResponseWriter, r *http.Request) {
+func getAnimal(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	animalID := mux.Vars(r)["animalID"]
 
-	animal, err := a.AnimalService.GetAnimal(ctx, animalID)
+	animal, err := animalRepo.GetByID(ctx, animalID)
+
 	if err != nil {
 		sendResponse(w, r, http.StatusInternalServerError, err.Error())
 		return
@@ -84,20 +77,20 @@ func (a *AnimalAPI) GetAnimal(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, r, http.StatusOK, animal)
 }
 
-// PostAnimal Creates a new Animal
-func (a *AnimalAPI) PostAnimal(w http.ResponseWriter, r *http.Request) {
+func postAnimal(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	animalReq := AnimalPostReq{}
 
 	b, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(b, &animalReq)
 
-	animalID, err := a.AnimalService.CreateAnimal(ctx, &models.Animal{
-		Typ:      animalReq.Typ,
-		Name:     animalReq.Name,
-		Birthday: animalReq.Birthday,
-		Owners:   animalReq.Owners,
-		ImageURL: animalReq.ImageURL,
+	animalID, err := animalRepo.Create(ctx, &models.Animal{
+		Typ:       animalReq.Typ,
+		Name:      animalReq.Name,
+		Birthday:  animalReq.Birthday,
+		Owners:    animalReq.Owners,
+		ImageURL:  animalReq.ImageURL,
+		CreatedAt: time.Now().Unix(),
 	})
 
 	if err != nil {
@@ -109,12 +102,11 @@ func (a *AnimalAPI) PostAnimal(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, r, http.StatusOK, animalID)
 }
 
-// DeleteAnimal Deletes an Animal
-func (a *AnimalAPI) DeleteAnimal(w http.ResponseWriter, r *http.Request) {
+func deleteAnimal(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	animalID := mux.Vars(r)["animalID"]
 
-	err := a.AnimalService.DeleteAnimal(ctx, animalID)
+	err := animalRepo.Destroy(ctx, animalID)
 	if err != nil {
 		sendResponse(w, r, http.StatusInternalServerError, err.Error())
 		return
