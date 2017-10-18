@@ -27,6 +27,22 @@ type response struct {
 
 var animalRepo cloudDatastoreRepository
 
+func sendResponse(w http.ResponseWriter, r *http.Request, status int, errorPayload interface{}, dataPayload interface{}) {
+	message, err := json.Marshal(response{
+		Error: errorPayload,
+		Data:  dataPayload,
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	w.Write(message)
+}
+
 func getUsersAnimals(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	ownerID := mux.Vars(r)["userID"]
@@ -34,13 +50,13 @@ func getUsersAnimals(w http.ResponseWriter, r *http.Request) {
 	animals, err := animalRepo.getByOwnerID(ctx, ownerID)
 
 	if err != nil {
-		sendResponse(w, r, http.StatusInternalServerError, err.Error())
+		sendResponse(w, r, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
 
 	log.Infof(ctx, "Animals retrieved: %s", animals)
 
-	sendResponse(w, r, http.StatusOK, animals)
+	sendResponse(w, r, http.StatusOK, nil, animals)
 }
 
 func getAnimals(w http.ResponseWriter, r *http.Request) {
@@ -54,23 +70,23 @@ func getAnimals(w http.ResponseWriter, r *http.Request) {
 			animal, err := animalRepo.getByID(ctx, animalID)
 
 			if err != nil {
-				sendResponse(w, r, http.StatusInternalServerError, err.Error())
+				sendResponse(w, r, http.StatusInternalServerError, err.Error(), nil)
 				return
 			}
 
 			animals = append(animals, *animal)
 		}
 
-		sendResponse(w, r, http.StatusOK, animals)
+		sendResponse(w, r, http.StatusOK, nil, animals)
 	} else {
 		animals, err := animalRepo.get(ctx)
 
 		if err != nil {
-			sendResponse(w, r, http.StatusInternalServerError, err.Error())
+			sendResponse(w, r, http.StatusInternalServerError, err.Error(), nil)
 			return
 		}
 
-		sendResponse(w, r, http.StatusOK, animals)
+		sendResponse(w, r, http.StatusOK, nil, animals)
 	}
 }
 
@@ -81,11 +97,11 @@ func getAnimal(w http.ResponseWriter, r *http.Request) {
 	animal, err := animalRepo.getByID(ctx, animalID)
 
 	if err != nil {
-		sendResponse(w, r, http.StatusInternalServerError, err.Error())
+		sendResponse(w, r, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
 
-	sendResponse(w, r, http.StatusOK, animal)
+	sendResponse(w, r, http.StatusOK, nil, animal)
 }
 
 func postAnimal(w http.ResponseWriter, r *http.Request) {
@@ -105,12 +121,12 @@ func postAnimal(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		sendResponse(w, r, http.StatusInternalServerError, err.Error())
+		sendResponse(w, r, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
 
 	log.Infof(ctx, "New animal ID: %s", animalID)
-	sendResponse(w, r, http.StatusOK, animalID)
+	sendResponse(w, r, http.StatusOK, nil, animalID)
 }
 
 func deleteAnimal(w http.ResponseWriter, r *http.Request) {
@@ -119,21 +135,9 @@ func deleteAnimal(w http.ResponseWriter, r *http.Request) {
 
 	err := animalRepo.destroy(ctx, animalID)
 	if err != nil {
-		sendResponse(w, r, http.StatusInternalServerError, err.Error())
+		sendResponse(w, r, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
 
-	sendResponse(w, r, http.StatusNoContent, nil)
-}
-
-func sendResponse(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
-	message, err := json.Marshal(data)
-	if err != nil {
-		panic(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(status)
-
-	w.Write(message)
+	sendResponse(w, r, http.StatusNoContent, nil, nil)
 }
