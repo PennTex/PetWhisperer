@@ -1,20 +1,29 @@
-package repositories
+package animalservice
 
 import (
 	"log"
 
 	"golang.org/x/net/context"
 
-	"github.com/PennTex/pet-whisperer/src/animalservice/models"
 	uuid "github.com/satori/go.uuid"
 	"google.golang.org/appengine/datastore"
 )
 
-type CloudDatastoreRepository struct{}
+type animal struct {
+	ID        string   `datastore:"-" json:"id"`
+	Typ       string   `datastore:"type" json:"type"`
+	Name      string   `datastore:"name" json:"name"`
+	Birthday  int64    `datastore:"birthday" json:"birthday"`
+	CreatedAt int64    `datastore:"created_at" json:"created_at"`
+	Owners    []string `datastore:"owners" json:"owners"`
+	ImageURL  string   `datastore:"image_url" json:"image_url"`
+}
+
+type cloudDatastoreRepository struct{}
 
 var entityKind = "animal"
 
-func (r CloudDatastoreRepository) Create(ctx context.Context, animal *models.Animal) (*models.Animal, error) {
+func (r cloudDatastoreRepository) create(ctx context.Context, animal *animal) (*animal, error) {
 	key := datastore.NewKey(ctx, entityKind, uuid.NewV4().String(), 0, nil)
 
 	animalKey, err := datastore.Put(ctx, key, animal)
@@ -27,12 +36,12 @@ func (r CloudDatastoreRepository) Create(ctx context.Context, animal *models.Ani
 	return animal, nil
 }
 
-func (r CloudDatastoreRepository) Get(ctx context.Context) ([]models.Animal, error) {
+func (r cloudDatastoreRepository) get(ctx context.Context) ([]animal, error) {
 	return nil, nil
 }
 
-func (r CloudDatastoreRepository) GetByOwnerID(ctx context.Context, ID string) ([]models.Animal, error) {
-	var animals []models.Animal
+func (r cloudDatastoreRepository) getByOwnerID(ctx context.Context, ID string) ([]animal, error) {
+	var animals []animal
 
 	query := datastore.
 		NewQuery(entityKind).
@@ -52,8 +61,8 @@ func (r CloudDatastoreRepository) GetByOwnerID(ctx context.Context, ID string) (
 	return animals, nil
 }
 
-func (r CloudDatastoreRepository) GetByID(ctx context.Context, ID string) (*models.Animal, error) {
-	var animal models.Animal
+func (r cloudDatastoreRepository) getByID(ctx context.Context, ID string) (*animal, error) {
+	var animal animal
 
 	animalKey := datastore.NewKey(ctx, entityKind, ID, 0, nil)
 
@@ -65,7 +74,7 @@ func (r CloudDatastoreRepository) GetByID(ctx context.Context, ID string) (*mode
 	return &animal, nil
 }
 
-func (r CloudDatastoreRepository) Destroy(ctx context.Context, ID string) error {
+func (r cloudDatastoreRepository) destroy(ctx context.Context, ID string) error {
 	animalKey := datastore.NewKey(ctx, entityKind, ID, 0, nil)
 	return datastore.Delete(ctx, animalKey)
 }

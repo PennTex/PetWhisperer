@@ -1,4 +1,4 @@
-package api
+package animalservice
 
 import (
 	"encoding/json"
@@ -8,19 +8,30 @@ import (
 
 	"google.golang.org/appengine/log"
 
-	"github.com/PennTex/pet-whisperer/src/animalservice/models"
-	"github.com/PennTex/pet-whisperer/src/animalservice/repositories"
 	"github.com/gorilla/mux"
 	"google.golang.org/appengine"
 )
 
-var animalRepo repositories.CloudDatastoreRepository
+type animalPostReq struct {
+	Typ      string   `json:"type"`
+	Name     string   `json:"name"`
+	Birthday int64    `json:"birthday"`
+	Owners   []string `json:"owners"`
+	ImageURL string   `json:"image_url"`
+}
+
+type response struct {
+	Error interface{} `json:"error"`
+	Data  interface{} `json:"data"`
+}
+
+var animalRepo cloudDatastoreRepository
 
 func getUsersAnimals(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	ownerID := mux.Vars(r)["userID"]
 
-	animals, err := animalRepo.GetByOwnerID(ctx, ownerID)
+	animals, err := animalRepo.getByOwnerID(ctx, ownerID)
 
 	if err != nil {
 		sendResponse(w, r, http.StatusInternalServerError, err.Error())
@@ -37,10 +48,10 @@ func getAnimals(w http.ResponseWriter, r *http.Request) {
 	animalIDs := r.URL.Query()["animalID"]
 
 	if animalIDs != nil {
-		var animals []models.Animal
+		var animals []animal
 
 		for _, animalID := range animalIDs {
-			animal, err := animalRepo.GetByID(ctx, animalID)
+			animal, err := animalRepo.getByID(ctx, animalID)
 
 			if err != nil {
 				sendResponse(w, r, http.StatusInternalServerError, err.Error())
@@ -52,7 +63,7 @@ func getAnimals(w http.ResponseWriter, r *http.Request) {
 
 		sendResponse(w, r, http.StatusOK, animals)
 	} else {
-		animals, err := animalRepo.Get(ctx)
+		animals, err := animalRepo.get(ctx)
 
 		if err != nil {
 			sendResponse(w, r, http.StatusInternalServerError, err.Error())
@@ -67,7 +78,7 @@ func getAnimal(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	animalID := mux.Vars(r)["animalID"]
 
-	animal, err := animalRepo.GetByID(ctx, animalID)
+	animal, err := animalRepo.getByID(ctx, animalID)
 
 	if err != nil {
 		sendResponse(w, r, http.StatusInternalServerError, err.Error())
@@ -79,12 +90,12 @@ func getAnimal(w http.ResponseWriter, r *http.Request) {
 
 func postAnimal(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	animalReq := AnimalPostReq{}
+	animalReq := animalPostReq{}
 
 	b, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(b, &animalReq)
 
-	animalID, err := animalRepo.Create(ctx, &models.Animal{
+	animalID, err := animalRepo.create(ctx, &animal{
 		Typ:       animalReq.Typ,
 		Name:      animalReq.Name,
 		Birthday:  animalReq.Birthday,
@@ -106,7 +117,7 @@ func deleteAnimal(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	animalID := mux.Vars(r)["animalID"]
 
-	err := animalRepo.Destroy(ctx, animalID)
+	err := animalRepo.destroy(ctx, animalID)
 	if err != nil {
 		sendResponse(w, r, http.StatusInternalServerError, err.Error())
 		return
