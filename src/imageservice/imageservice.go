@@ -1,4 +1,4 @@
-package api
+package imageservice
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 func New() http.Handler {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/upload", uploadImage).Methods("POST")
+	router.HandleFunc("/upload", handleUploadImage).Methods("POST")
 
 	return router
 }

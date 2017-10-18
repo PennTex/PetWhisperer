@@ -1,4 +1,4 @@
-package api
+package imageservice
 
 import (
 	"encoding/json"
@@ -15,7 +15,7 @@ import (
 	"google.golang.org/appengine/log"
 )
 
-func uploadImage(w http.ResponseWriter, r *http.Request) {
+func handleUploadImage(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	f, fh, err := r.FormFile("image")
